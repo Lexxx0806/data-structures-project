@@ -1,0 +1,21 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1, p {
+    text-align: center;
+}
+
+/* This is the main "screen" */
+#search-canvas {
+    background-color: #333;
+    border: 2px solid #0096ff;
+    border-radius: 5px;
+}
