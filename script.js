@@ -4,8 +4,8 @@
 // --- Settings ---
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const POINT_COUNT = 2000;
-const POINT_COLOR = "white";
+const POINT_COUNT = 100;
+const POINT_COLOR = "black";   // NEW: Changed to black to see on white map
 const FOUND_COLOR = "lime";
 const BOX_COLOR = "aqua";
 
@@ -16,6 +16,9 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
 const resultsLabel = document.getElementById('results-label');
+
+// NEW: Create a variable to hold our map image
+const mapImage = new Image();
 
 let isDragging = false;
 let dragStart = { x: 0, y: 0 };
@@ -39,11 +42,11 @@ function generateRandomPoints(count, width, height) {
 
 // --- Main Draw Function ---
 function draw() {
-    // 1. Clear the canvas
-    ctx.fillStyle = "#333"; // Background color
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    // 1. Clear the canvas (and draw the map)
+    // NEW: We replace the black fillRect with our map image
+    ctx.drawImage(mapImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // 2. Draw all points (as small white dots)
+    // 2. Draw all points (as small black dots)
     ctx.fillStyle = POINT_COLOR;
     for (const point of allPoints) {
         ctx.beginPath();
@@ -89,12 +92,15 @@ canvas.addEventListener('mousemove', (e) => {
     draw();
 });
 
+//
+//  This is still the "SLOW SEARCH" version.
+//  You can replace this with the "FAST SEARCH" (fetch) function
+//  once Team 1 is ready.
+//
 canvas.addEventListener('mouseup', (e) => {
     isDragging = false;
     
     // --- THIS IS THE "SLOW" SEARCH ---
-    // Team 2: When Team 1 is done, you will replace this
-    // "for" loop with a call to the Python server.
     console.log("Running slow search...");
     foundPoints = [];
     for (const point of allPoints) {
@@ -118,8 +124,17 @@ canvas.addEventListener('mouseup', (e) => {
 
 // --- Initialization ---
 function init() {
-    allPoints = generateRandomPoints(POINT_COUNT, CANVAS_WIDTH, CANVAS_HEIGHT);
-    draw();
+    // NEW: We set this function to run ONLY after the image has loaded
+    mapImage.onload = () => {
+        // Now that the map is loaded, we can generate points and draw
+        allPoints = generateRandomPoints(POINT_COUNT, CANVAS_WIDTH, CANVAS_HEIGHT);
+        draw();
+    };
+    
+    // NEW: We tell the image to start loading.
+    // Make sure you named the image "map.png" and it's in the same folder
+    mapImage.src = 'map.jpg'; 
 }
 
+// Start the app
 init();
