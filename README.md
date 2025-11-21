@@ -4,11 +4,25 @@ This is the central README for our project. If you are lost, start here.
 
 Project Deadline: 12/11/2025
 
+🎯 Project Goal
+
+The primary objective of this project is to demonstrate the efficiency of the Quadtree data structure in a real-world application.
+
+We are building a Geospatial Search Engine for rental listings. Instead of checking every single listing one by one (which is slow), we use a Quadtree to recursively divide the map and instantly locate points within a user's search area. This project combines a complex back-end algorithm with a polished, interactive front-end interface.
+
 👥 Our Team
 
 Team 1 (Back-End / Python): Eni, Bato
 
 Team 2 (Front-End / JS): Dan, Laila
+
+💡 How It Works (The Concept)
+
+If you are confused about why we have two parts, think of our project like a Restaurant:
+
+The Server (server.py) is the Kitchen: It runs in the background and waits for specific orders. It doesn't have a "menu" you can look at. Right now, it only knows how to respond to one specific command: /search. If you try to open it directly in a browser, it will give you a 404 error because you didn't give it an order!
+
+The Website (index.html) is the Dining Room: This is the menu that customers actually look at. You open this file to see the interface. When you drag the mouse to search, the "Dining Room" secretly sends a message to the "Kitchen" to get the data.
 
 🗓️ Important Dates
 
@@ -16,13 +30,13 @@ Project Start: 2025-11-15
 
 Front-End v2 (Gallery) Complete: 2025-11-17
 
-Back-End (Quadtree) Target Date:
+Back-End (Quadtree) Target Date: 2025-11-28
 
-Full Integration Target Date:
+Full Integration Target Date: 2025-12-05
 
-Final Presentation: 
+Final Presentation: 2025-12-11
 
-# How to Run This Project (Quick Start)
+🚀 How to Run This Project (Quick Start)
 
 The project is in two parts. You must run both to see the final version.
 
@@ -36,13 +50,11 @@ Install the required packages (only need to do this once):
 
 py -m pip install -r requirements.txt
 
-
 Run the server:
 
 py server.py
 
-
-Leave this terminal open. The server is now running at http://127.0.0.1:5000.
+Note: Do not click the link it gives you (it will show a 404). Just leave this terminal open.
 
 2. Front-End (Team 2)
 
@@ -98,21 +110,21 @@ Integration: The two parts are NOT connected yet.
 
 🟢 TASKS DONE (Completed)
 
-[X] Setup GitHub repository (Alex)
+[X] Setup GitHub repository
 
-[X] Fix Python/Flask installation issues (Alex)
+[X] Fix Python/Flask installation issues
 
-[X] Create all foundation files for Front-End and Back-End (Alex)
+[X] Create all foundation files for Front-End and Back-End
 
-[X] (Front-End) Add custom map image background (Alex)
+[X] (Front-End) Add custom map image background
 
-[X] (Front-End) Implement "Listing Template" system (Alex)
+[X] (Front-End) Implement "Listing Template" system
 
-[X] (Front-End) Build sidebar UI to show found listings (Alex)
+[X] (Front-End) Build sidebar UI to show found listings
 
-[X] (Front-End) Build pop-up image gallery modal (Alex)
+[X] (Front-End) Build pop-up image gallery modal
 
-[X] (Front-End) Create 58 fake listing templates (Alex)
+[X] (Front-End) Create 58 fake listing templates
 
 🔴 TO-DO: Team 1 (Eni & Bato) - Back-End
 
@@ -138,7 +150,7 @@ This is our #1 priority. We must finish the data structure.
 
 [ ] Test:
 
-[ ] Test your /search endpoint (using a tool like Postman, or just ask Alex) to make sure it returns the correct list of full listing objects.
+[ ] Test your /search endpoint (using a tool like Postman) to make sure it returns the correct list of full listing objects.
 
 🟡 TO-DO: Team 2 (Dan & Laila) - Front-End
 
@@ -170,7 +182,7 @@ Your "slow mode" is working, but your final job is to connect to Team 1.
 
 [ ] Test the complete, live-data application.
 
-🔵 TO-DO: Project Manager (Alex)
+🔵 TO-DO: Project Coordination
 
 [ ] Make sure everyone can run the project and understands their tasks.
 
