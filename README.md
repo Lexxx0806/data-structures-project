@@ -50,9 +50,11 @@ Install the required packages (only need to do this once):
 
 py -m pip install -r requirements.txt
 
+
 Run the server:
 
 py server.py
+
 
 Note: Do not click the link it gives you (it will show a 404). Just leave this terminal open.
 
@@ -102,9 +104,9 @@ fakeimages/: The folder where we store all our fake room photos.
 
 🚧 Current Status (as of Nov 17)
 
-Front-End: 90% complete. The UI is built and works perfectly in "Slow Mode."
+Front-End: 95% complete. The UI (v4) has a map, sidebar, and image gallery.
 
-Back-End: 25% complete. The server runs, but the quadtree.py logic is empty.
+Back-End: 25% complete. The server runs, but the data is simple (dots only) and quadtree.py logic is empty.
 
 Integration: The two parts are NOT connected yet.
 
@@ -142,45 +144,35 @@ This is our #1 priority. We must finish the data structure.
 
 [ ] Update server.py:
 
-[ ] The server is generating random points right now. We need to copy the LISTING_TEMPLATES array from script.js into server.py so the server has the same rich data.
+[ ] The server is currently generating simple dots. We need to copy the LISTING_TEMPLATES array from script.js into server.py.
 
-[ ] Update the generateRandomPoints function in server.py to use these templates (just like script.js does).
+[ ] Update the generateRandomPoints function in server.py to use these templates.
 
-[ ] Update the /search function. Right now, it sends back [{x, y}, ...]. It needs to send back the full point object (title, price, photos, etc.) so the sidebar can be built.
+[ ] Update the /search function to send back the full point object (title, price, photos) so the sidebar works.
 
 [ ] Test:
 
-[ ] Test your /search endpoint (using a tool like Postman) to make sure it returns the correct list of full listing objects.
+[ ] Use Postman or a test script to ensure /search returns the correct data.
 
 🟡 TO-DO: Team 2 (Dan & Laila) - Front-End
 
-Your "slow mode" is working, but your final job is to connect to Team 1.
+Your main job is to polish the UI and prepare for integration.
 
-[ ] Understand the new code:
+[ ] Polish & Improvements (Optional but Recommended):
 
-[ ] Run git pull!
+[ ] Pointer Cursor: Make the mouse cursor change to a "pointer hand" when hovering over a green/found dot (in script.js).
 
-[ ] Open index.html, style.css, and script.js and see how the new sidebar and image gallery work.
+[ ] Custom Scrollbar: Style the sidebar scrollbar to match the dark theme (in style.css).
 
-[ ] Polish:
-
-[ ] Feel free to improve style.css. Change colors, fonts, or alignments.
-
-[ ] Add more real images to the fakeimages folder and update the LISTING_TEMPLATES array in script.js. (Make sure to tell Team 1, so they can copy the new array to server.py!)
+[ ] Empty State: Add a friendly "No listings found" message/icon to the sidebar when the search returns 0 results (in script.js).
 
 [ ] Final Integration (Waiting on Team 1):
 
-[ ] This is the last and most important step.
+[ ] Delete the "Slow Search" loop in script.js.
 
-[ ] Go to script.js and find the mouseup function.
+[ ] Implement the "Fast Search" using fetch() to call Team 1's server (http://127.0.0.1:5000/search).
 
-[ ] Delete the "Slow Search" loop.
-
-[ ] Implement the "Fast Search" by adding the fetch() command to call Team 1's server (http://127.0.0.1:5000/search).
-
-[ ] Get the list of results from the server and pass it to foundPoints.
-
-[ ] Test the complete, live-data application.
+[ ] Test the complete application.
 
 🔵 TO-DO: Project Coordination
 
