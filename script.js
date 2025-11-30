@@ -139,42 +139,57 @@ const LISTING_TEMPLATES = [
     {
         title: "2-BR w/ Balcony",
         type: "2-BR Apartment",
-        address: "77 Puzhong Rd, Zhongli",
-        price: 16500,
-        photos: ['fakeimages/room11_a.jpg', 'fakeimages/room11_b.jpg']
-    },
-    {
-        title: "Studio near Zhongli Station",
-        type: "Studio",
-        address: "19 Jianxing Rd, Zhongli",
-        price: 10000,
-        photos: ['fakeimages/room12_a.jpg']
-    },
-    {
-        title: "Large 4-BR House",
-        type: "4-BR Home",
-        address: "30 Lane 725, Jiadong Rd",
-        price: 28000,
-        photos: ['fakeimages/room13_a.jpg', 'fakeimages/room13_b.jpg']
-    },
-    {
-        title: "Penthouse Loft",
-        type: "Loft",
-        address: "500 Minzu Rd, Zhongli",
-        price: 27000,
-        photos: ['fakeimages/room14_a.jpg']
-    },
-    {
-        title: "Basic Room, All Utilities Incl.",
-        type: "Room",
-        address: "88 Zhongmei Rd, Zhongli",
-        price: 6500,
-        photos: ['fakeimages/room15_a.jpg']
-    },
-    {
-        title: "New 1-BR Condo",
-        type: "1-BR Apartment",
-        address: "12 Long'an St, Zhongli",
+        // --- MODIFIED `updateSidebar` ---
+function updateSidebar() {
+    listingContainer.innerHTML = ''; 
+    const countElement = document.getElementById('listing-count'); 
+    
+    // Update the count display using the element from index.html (if you have one)
+    // If you don't have a separate span, the line below will still work using sidebarTitle:
+    const countSpan = sidebarTitle.querySelector('span') || { textContent: '' };
+    countSpan.textContent = foundPoints.length; 
+    
+    // Check if the sidebar should be visible or show the empty state
+    if (foundPoints.length === 0) {
+        // --- NEW: Empty State Logic ---
+        const emptyStateHTML = `
+            <div class="empty-state">
+                <span class="emoji">😔</span>
+                <h3>No listings found!</h3>
+                <p>Try moving or expanding your search area on the map.</p>
+            </div>
+        `;
+        listingContainer.innerHTML = emptyStateHTML;
+        sidebar.classList.remove('visible'); // Keeps the sidebar hidden or slides it out
+        // -----------------------------
+        
+    } else {
+        sidebar.classList.add('visible'); 
+
+        for (const point of foundPoints) {
+            const card = document.createElement('div');
+            card.className = 'listing-card';
+            card.id = point.id; 
+
+            // Use the *first* photo (photos[0]) for the thumbnail
+            card.innerHTML = `
+                <img src="${point.photos[0]}" alt="${point.title}" onerror="this.src='https://placehold.co/120x120/505050/f5f5f5?text=Img+Err';">
+                <div class="listing-card-info">
+                    <h3>${point.title}</h3>
+                    <p>${point.type} • ${point.address}</p>
+                    <p class="price">NT$${point.price.toLocaleString()}/month</p>
+                </div>
+            `;
+            
+            // --- Add click listener to open the gallery ---
+            card.addEventListener('click', () => {
+                openImageGallery(point);
+            });
+            
+            listingContainer.appendChild(card);
+        }
+    }
+}
         price: 15000,
         photos: ['fakeimages/room16_a.jpg', 'fakeimages/room16_b.jpg']
     },
