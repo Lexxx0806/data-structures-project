@@ -1,6 +1,45 @@
 // script.js
 // v4: Added image gallery modal
 
+// --- NEW: FAST SEARCH (QUADTREE INTEGRATION) FUNCTION ---
+async function fastSearch(searchBox) {
+    console.log("Running FAST search via Quadtree server...");
+
+    // 1. Prepare the search boundary coordinates
+    const boundary = {
+        minX: searchBox.x,
+        minY: searchBox.y,
+        maxX: searchBox.x + searchBox.width,
+        maxY: searchBox.y + searchBox.height
+    };
+    
+    // 2. Build the URL with query parameters for Team 1's server
+    const query = new URLSearchParams(boundary).toString();
+    const url = `http://127.0.0.1:5000/search?${query}`; 
+    
+    try {
+        // 3. Fetch data from the Python server
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            // Log the error and fall back to zero results
+            console.error(`HTTP Error: Server returned status ${response.status}`);
+            return []; 
+        }
+        
+        // 4. Parse the JSON response
+        const foundListings = await response.json();
+        
+        console.log(`Quadtree server found ${foundListings.length} listings.`);
+        return foundListings; // Return the full array of points
+        
+    } catch (error) {
+        console.error("Connection Error: Failed to fetch listings from Python server.", error);
+        // If the server isn't running, assume zero results
+        return []; 
+    }
+}
+
 // --- Settings ---
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
@@ -217,24 +256,26 @@ function updateSidebar() {
     {
         title: "Small Studio",
         type: "Studio",
-        address: "13 Huanbei Rd, Zhongli",
-        price: 8000,
-        photos: ['fakeimages/room20_a.jpg']
-    },
-    {
-        title: "3-BR for Family or Shares",
-        type: "3-BR Home",
-        address: "25 Yixing Rd, Zhongli",
-        price: 22000,
-        photos: ['fakeimages/room1_b.jpg', 'fakeimages/room3_a.jpg']
-    },
-    {
-        title: "Minimalist Room",
-        type: "Room",
-        address: "300 Zhongshan Rd, Zhongli",
-        price: 5000,
-        photos: ['fakeimages/room2_b.jpg']
-    },
+        canvas.addEventListener('mouseup', async (e) => { // NOTE THE 'async' KEYWORD HERE!
+    if (!isDragging) return; 
+    isDragging = false;
+    
+    // --- THIS IS THE OLD SLOW SEARCH LOOP (TO BE DELETED/REMOVED) ---
+    // console.log("Running slow search...");
+    // foundPoints = [];
+    // for (const point of allPoints) {
+    //     ... (slow search logic) ...
+    // }
+    // console.log(`Found ${foundPoints.length} points.`);
+    // --- END OF SLOW SEARCH ---
+    
+    // --- NEW: FAST SEARCH CALL ---
+    foundPoints = await fastSearch(searchRect); // Call the new async function
+    // ----------------------------
+    
+    updateSidebar();
+    draw();
+});
     {
         title: "Loft near Luguang",
         type: "Loft",
