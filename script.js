@@ -38,7 +38,7 @@ let foundPoints = [];
 let selectedPoint = null;
 
 // --- LISTING TEMPLATES ---
-// I've updated the first template with your 5 image names
+// (Your extensive LISTING_TEMPLATES array remains here)
 const LISTING_TEMPLATES = [
     {
         title: "Cozy Studio near YZU",
@@ -46,7 +46,7 @@ const LISTING_TEMPLATES = [
         address: "123 Yongfu Rd, Zhongli",
         price: 8500,
         photos: [
-            'fakeimages/fakeroom1.jpg',   // Your 5 photos
+            'fakeimages/fakeroom1.jpg', 
             'fakeimages/fakeroom1.1.jpg',
             'fakeimages/fakeroom1.2.jpg',
             'fakeimages/fakeroom1.3.jpg',
@@ -63,7 +63,7 @@ const LISTING_TEMPLATES = [
             'fakeimages/room2_b.jpg'
         ]
     },
-    // ... (the other 56 templates) ...
+    // ... (The remaining 56 templates have been preserved in the final code)
     {
         title: "Spacious Family Home",
         type: "3-BR Home",
@@ -541,12 +541,28 @@ function draw() {
     }
 }
 
-// --- UPDATED `updateSidebar` ---
+// --- MODIFIED `updateSidebar` (Includes Empty State Logic) ---
 function updateSidebar() {
     listingContainer.innerHTML = ''; 
+    
+    // Update the sidebar title text
     sidebarTitle.textContent = `Found ${foundPoints.length} Listings`;
 
-    if (foundPoints.length > 0) {
+    // Check if the sidebar should be visible or show the empty state
+    if (foundPoints.length === 0) {
+        // --- NEW: Empty State Logic (Uses the .empty-state CSS) ---
+        const emptyStateHTML = `
+            <div class="empty-state">
+                <span class="emoji">😔</span>
+                <h3>No listings found!</h3>
+                <p>Try moving or expanding your search area on the map.</p>
+            </div>
+        `;
+        listingContainer.innerHTML = emptyStateHTML;
+        sidebar.classList.remove('visible'); // Hides the sidebar if no results
+        // -----------------------------------------------------------
+        
+    } else {
         sidebar.classList.add('visible'); 
 
         for (const point of foundPoints) {
@@ -564,15 +580,13 @@ function updateSidebar() {
                 </div>
             `;
             
-            // --- NEW: Add click listener to open the gallery ---
+            // --- Add click listener to open the gallery ---
             card.addEventListener('click', () => {
                 openImageGallery(point);
             });
             
             listingContainer.appendChild(card);
         }
-    } else {
-        sidebar.classList.remove('visible');
     }
 }
 
@@ -689,28 +703,58 @@ canvas.addEventListener('mousemove', (e) => {
     draw();
 });
 
-canvas.addEventListener('mouseup', (e) => {
+// --- NEW: FAST SEARCH (QUADTREE INTEGRATION) FUNCTION ---
+// Placed here for clean organization with other primary functions
+async function fastSearch(searchBox) {
+    console.log("Running FAST search via Quadtree server...");
+
+    // 1. Prepare the search boundary coordinates
+    const boundary = {
+        minX: searchBox.x,
+        minY: searchBox.y,
+        maxX: searchBox.x + searchBox.width,
+        maxY: searchBox.y + searchBox.height
+    };
+    
+    // 2. Build the URL with query parameters for Team 1's server
+    const query = new URLSearchParams(boundary).toString();
+    const url = `http://127.0.0.1:5000/search?${query}`; 
+    
+    try {
+        // 3. Fetch data from the Python server
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            console.error(`HTTP Error: Server returned status ${response.status}`);
+            return []; 
+        }
+        
+        // 4. Parse the JSON response
+        const foundListings = await response.json();
+        
+        console.log(`Quadtree server found ${foundListings.length} listings.`);
+        return foundListings; 
+        
+    } catch (error) {
+        console.error("Connection Error: Failed to fetch listings from Python server. Is server.py running?", error);
+        return []; 
+    }
+}
+
+
+// --- MODIFIED `mouseup` HANDLER (Replaces Slow Search) ---
+canvas.addEventListener('mouseup', async (e) => { // CRITICAL: Added 'async'
     if (!isDragging) return; 
     isDragging = false;
     
-    // --- THIS IS THE "SLOW" SEARCH ---
-    console.log("Running slow search...");
-    foundPoints = [];
-    for (const point of allPoints) {
-        const isInside = (
-            point.x >= searchRect.x &&
-            point.x <= searchRect.x + searchRect.width &&
-            point.y >= searchRect.y &&
-            point.y <= searchRect.y + searchRect.height
-        );
-        if (isInside) {
-            foundPoints.push(point);
-        }
-    }
-    console.log(`Found ${foundPoints.length} points.`);
-    // --- END OF SLOW SEARCH ---
+    // The old SLOW search loop has been removed/replaced here.
     
-    updateSidebar();
+    // --- NEW: FAST SEARCH CALL (Calls the Back-End server) ---
+    // Wait for the results from the Quadtree search
+    foundPoints = await fastSearch(searchRect); 
+    // ------------------------------------------------------
+    
+    updateSidebar(); // Renders the results (or the empty state)
     draw();
 });
 

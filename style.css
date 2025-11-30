@@ -211,3 +211,58 @@ h1, p {
     opacity: 1;
     border-color: #0096ff;
 }
+
+/* --- CUSTOM SCROLLBAR STYLES --- */
+
+/* 1. Set the width of the scrollbar */
+#sidebar::-webkit-scrollbar {
+    width: 10px; 
+}
+
+/* 2. Style the scrollbar TRACK (the background groove) */
+#sidebar::-webkit-scrollbar-track {
+    background: #3a3a3a; /* Matches the sidebar background */
+    border-radius: 10px;
+}
+
+/* 3. Style the scrollbar THUMB (the movable element) */
+#sidebar::-webkit-scrollbar-thumb {
+    background: #5a5a5a; /* A noticeable dark gray */
+    border-radius: 10px;
+    border: 2px solid #3a3a3a; /* Creates padding/gap effect */
+}
+
+/* 4. Style on hover */
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #6e6e6e; 
+}
+
+/* --- EMPTY STATE STYLES --- */
+
+.empty-state {
+    padding: 30px 20px;
+    text-align: center;
+    color: #aaa; 
+    background-color: #333; /* Slightly darker than the cards */
+    border-radius: 6px;
+    margin: 20px 10px; 
+    border: 1px dashed #555;
+}
+
+.empty-state .emoji {
+    display: block;
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.empty-state h3 {
+    color: #f5f5f5;
+    margin: 0 0 5px 0;
+    font-size: 1.2em;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
