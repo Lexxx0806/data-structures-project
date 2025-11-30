@@ -1,45 +1,6 @@
 // script.js
 // v4: Added image gallery modal
 
-// --- NEW: FAST SEARCH (QUADTREE INTEGRATION) FUNCTION ---
-async function fastSearch(searchBox) {
-    console.log("Running FAST search via Quadtree server...");
-
-    // 1. Prepare the search boundary coordinates
-    const boundary = {
-        minX: searchBox.x,
-        minY: searchBox.y,
-        maxX: searchBox.x + searchBox.width,
-        maxY: searchBox.y + searchBox.height
-    };
-    
-    // 2. Build the URL with query parameters for Team 1's server
-    const query = new URLSearchParams(boundary).toString();
-    const url = `http://127.0.0.1:5000/search?${query}`; 
-    
-    try {
-        // 3. Fetch data from the Python server
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            // Log the error and fall back to zero results
-            console.error(`HTTP Error: Server returned status ${response.status}`);
-            return []; 
-        }
-        
-        // 4. Parse the JSON response
-        const foundListings = await response.json();
-        
-        console.log(`Quadtree server found ${foundListings.length} listings.`);
-        return foundListings; // Return the full array of points
-        
-    } catch (error) {
-        console.error("Connection Error: Failed to fetch listings from Python server.", error);
-        // If the server isn't running, assume zero results
-        return []; 
-    }
-}
-
 // --- Settings ---
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
@@ -77,7 +38,7 @@ let foundPoints = [];
 let selectedPoint = null;
 
 // --- LISTING TEMPLATES ---
-// I've updated the first template with your 5 image names
+// (Your extensive LISTING_TEMPLATES array remains here)
 const LISTING_TEMPLATES = [
     {
         title: "Cozy Studio near YZU",
@@ -85,7 +46,7 @@ const LISTING_TEMPLATES = [
         address: "123 Yongfu Rd, Zhongli",
         price: 8500,
         photos: [
-            'fakeimages/fakeroom1.jpg',   // Your 5 photos
+            'fakeimages/fakeroom1.jpg', 
             'fakeimages/fakeroom1.1.jpg',
             'fakeimages/fakeroom1.2.jpg',
             'fakeimages/fakeroom1.3.jpg',
@@ -102,7 +63,7 @@ const LISTING_TEMPLATES = [
             'fakeimages/room2_b.jpg'
         ]
     },
-    // ... (the other 56 templates) ...
+    // ... (The remaining 56 templates have been preserved in the final code)
     {
         title: "Spacious Family Home",
         type: "3-BR Home",
@@ -178,57 +139,42 @@ const LISTING_TEMPLATES = [
     {
         title: "2-BR w/ Balcony",
         type: "2-BR Apartment",
-        // --- MODIFIED `updateSidebar` ---
-function updateSidebar() {
-    listingContainer.innerHTML = ''; 
-    const countElement = document.getElementById('listing-count'); 
-    
-    // Update the count display using the element from index.html (if you have one)
-    // If you don't have a separate span, the line below will still work using sidebarTitle:
-    const countSpan = sidebarTitle.querySelector('span') || { textContent: '' };
-    countSpan.textContent = foundPoints.length; 
-    
-    // Check if the sidebar should be visible or show the empty state
-    if (foundPoints.length === 0) {
-        // --- NEW: Empty State Logic ---
-        const emptyStateHTML = `
-            <div class="empty-state">
-                <span class="emoji">😔</span>
-                <h3>No listings found!</h3>
-                <p>Try moving or expanding your search area on the map.</p>
-            </div>
-        `;
-        listingContainer.innerHTML = emptyStateHTML;
-        sidebar.classList.remove('visible'); // Keeps the sidebar hidden or slides it out
-        // -----------------------------
-        
-    } else {
-        sidebar.classList.add('visible'); 
-
-        for (const point of foundPoints) {
-            const card = document.createElement('div');
-            card.className = 'listing-card';
-            card.id = point.id; 
-
-            // Use the *first* photo (photos[0]) for the thumbnail
-            card.innerHTML = `
-                <img src="${point.photos[0]}" alt="${point.title}" onerror="this.src='https://placehold.co/120x120/505050/f5f5f5?text=Img+Err';">
-                <div class="listing-card-info">
-                    <h3>${point.title}</h3>
-                    <p>${point.type} • ${point.address}</p>
-                    <p class="price">NT$${point.price.toLocaleString()}/month</p>
-                </div>
-            `;
-            
-            // --- Add click listener to open the gallery ---
-            card.addEventListener('click', () => {
-                openImageGallery(point);
-            });
-            
-            listingContainer.appendChild(card);
-        }
-    }
-}
+        address: "77 Puzhong Rd, Zhongli",
+        price: 16500,
+        photos: ['fakeimages/room11_a.jpg', 'fakeimages/room11_b.jpg']
+    },
+    {
+        title: "Studio near Zhongli Station",
+        type: "Studio",
+        address: "19 Jianxing Rd, Zhongli",
+        price: 10000,
+        photos: ['fakeimages/room12_a.jpg']
+    },
+    {
+        title: "Large 4-BR House",
+        type: "4-BR Home",
+        address: "30 Lane 725, Jiadong Rd",
+        price: 28000,
+        photos: ['fakeimages/room13_a.jpg', 'fakeimages/room13_b.jpg']
+    },
+    {
+        title: "Penthouse Loft",
+        type: "Loft",
+        address: "500 Minzu Rd, Zhongli",
+        price: 27000,
+        photos: ['fakeimages/room14_a.jpg']
+    },
+    {
+        title: "Basic Room, All Utilities Incl.",
+        type: "Room",
+        address: "88 Zhongmei Rd, Zhongli",
+        price: 6500,
+        photos: ['fakeimages/room15_a.jpg']
+    },
+    {
+        title: "New 1-BR Condo",
+        type: "1-BR Apartment",
+        address: "12 Long'an St, Zhongli",
         price: 15000,
         photos: ['fakeimages/room16_a.jpg', 'fakeimages/room16_b.jpg']
     },
@@ -256,26 +202,24 @@ function updateSidebar() {
     {
         title: "Small Studio",
         type: "Studio",
-        canvas.addEventListener('mouseup', async (e) => { // NOTE THE 'async' KEYWORD HERE!
-    if (!isDragging) return; 
-    isDragging = false;
-    
-    // --- THIS IS THE OLD SLOW SEARCH LOOP (TO BE DELETED/REMOVED) ---
-    // console.log("Running slow search...");
-    // foundPoints = [];
-    // for (const point of allPoints) {
-    //     ... (slow search logic) ...
-    // }
-    // console.log(`Found ${foundPoints.length} points.`);
-    // --- END OF SLOW SEARCH ---
-    
-    // --- NEW: FAST SEARCH CALL ---
-    foundPoints = await fastSearch(searchRect); // Call the new async function
-    // ----------------------------
-    
-    updateSidebar();
-    draw();
-});
+        address: "13 Huanbei Rd, Zhongli",
+        price: 8000,
+        photos: ['fakeimages/room20_a.jpg']
+    },
+    {
+        title: "3-BR for Family or Shares",
+        type: "3-BR Home",
+        address: "25 Yixing Rd, Zhongli",
+        price: 22000,
+        photos: ['fakeimages/room1_b.jpg', 'fakeimages/room3_a.jpg']
+    },
+    {
+        title: "Minimalist Room",
+        type: "Room",
+        address: "300 Zhongshan Rd, Zhongli",
+        price: 5000,
+        photos: ['fakeimages/room2_b.jpg']
+    },
     {
         title: "Loft near Luguang",
         type: "Loft",
@@ -597,12 +541,28 @@ function draw() {
     }
 }
 
-// --- UPDATED `updateSidebar` ---
+// --- MODIFIED `updateSidebar` (Includes Empty State Logic) ---
 function updateSidebar() {
     listingContainer.innerHTML = ''; 
+    
+    // Update the sidebar title text
     sidebarTitle.textContent = `Found ${foundPoints.length} Listings`;
 
-    if (foundPoints.length > 0) {
+    // Check if the sidebar should be visible or show the empty state
+    if (foundPoints.length === 0) {
+        // --- NEW: Empty State Logic (Uses the .empty-state CSS) ---
+        const emptyStateHTML = `
+            <div class="empty-state">
+                <span class="emoji">😔</span>
+                <h3>No listings found!</h3>
+                <p>Try moving or expanding your search area on the map.</p>
+            </div>
+        `;
+        listingContainer.innerHTML = emptyStateHTML;
+        sidebar.classList.remove('visible'); // Hides the sidebar if no results
+        // -----------------------------------------------------------
+        
+    } else {
         sidebar.classList.add('visible'); 
 
         for (const point of foundPoints) {
@@ -620,15 +580,13 @@ function updateSidebar() {
                 </div>
             `;
             
-            // --- NEW: Add click listener to open the gallery ---
+            // --- Add click listener to open the gallery ---
             card.addEventListener('click', () => {
                 openImageGallery(point);
             });
             
             listingContainer.appendChild(card);
         }
-    } else {
-        sidebar.classList.remove('visible');
     }
 }
 
@@ -745,28 +703,58 @@ canvas.addEventListener('mousemove', (e) => {
     draw();
 });
 
-canvas.addEventListener('mouseup', (e) => {
+// --- NEW: FAST SEARCH (QUADTREE INTEGRATION) FUNCTION ---
+// Placed here for clean organization with other primary functions
+async function fastSearch(searchBox) {
+    console.log("Running FAST search via Quadtree server...");
+
+    // 1. Prepare the search boundary coordinates
+    const boundary = {
+        minX: searchBox.x,
+        minY: searchBox.y,
+        maxX: searchBox.x + searchBox.width,
+        maxY: searchBox.y + searchBox.height
+    };
+    
+    // 2. Build the URL with query parameters for Team 1's server
+    const query = new URLSearchParams(boundary).toString();
+    const url = `http://127.0.0.1:5000/search?${query}`; 
+    
+    try {
+        // 3. Fetch data from the Python server
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            console.error(`HTTP Error: Server returned status ${response.status}`);
+            return []; 
+        }
+        
+        // 4. Parse the JSON response
+        const foundListings = await response.json();
+        
+        console.log(`Quadtree server found ${foundListings.length} listings.`);
+        return foundListings; 
+        
+    } catch (error) {
+        console.error("Connection Error: Failed to fetch listings from Python server. Is server.py running?", error);
+        return []; 
+    }
+}
+
+
+// --- MODIFIED `mouseup` HANDLER (Replaces Slow Search) ---
+canvas.addEventListener('mouseup', async (e) => { // CRITICAL: Added 'async'
     if (!isDragging) return; 
     isDragging = false;
     
-    // --- THIS IS THE "SLOW" SEARCH ---
-    console.log("Running slow search...");
-    foundPoints = [];
-    for (const point of allPoints) {
-        const isInside = (
-            point.x >= searchRect.x &&
-            point.x <= searchRect.x + searchRect.width &&
-            point.y >= searchRect.y &&
-            point.y <= searchRect.y + searchRect.height
-        );
-        if (isInside) {
-            foundPoints.push(point);
-        }
-    }
-    console.log(`Found ${foundPoints.length} points.`);
-    // --- END OF SLOW SEARCH ---
+    // The old SLOW search loop has been removed/replaced here.
     
-    updateSidebar();
+    // --- NEW: FAST SEARCH CALL (Calls the Back-End server) ---
+    // Wait for the results from the Quadtree search
+    foundPoints = await fastSearch(searchRect); 
+    // ------------------------------------------------------
+    
+    updateSidebar(); // Renders the results (or the empty state)
     draw();
 });
 
