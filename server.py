@@ -521,11 +521,11 @@ def search_quadtree():
         photos: ['fakeimages/room20_a.jpg']
         }
 ];
-def generateRandomPoints(count, width, height):
+def generateRandomPoints(POINT_COUNT, SCREEN_WIDTH, SCREEN_HEIGHT):
     points = []
     template = random.choice(LISTING_TEMPLATES)
     
-    for _ in range(count):
+    for _ in range(POINT_COUNT):
         x = random.randint(0, SCREEN_WIDTH)
         y = random.randint(0, SCREEN_HEIGHT)
 
@@ -546,5 +546,6 @@ if __name__ == "__main__":
     # Team 1 can leave this running in their terminal.
     # `debug=True` means the server will auto-restart when you save changes.
     app.run(debug=True, port=5000)
+    
     generated_points = generateRandomPoints()
     print(generated_points)
