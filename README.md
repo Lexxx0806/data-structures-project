@@ -2,7 +2,7 @@
 
 This is the central README for our project. If you are lost, start here.
 
-Project Deadline: 12/11/2025
+Project Deadline: 12/17/2025
 
 🎯 Project Goal
 
@@ -50,11 +50,9 @@ Install the required packages (only need to do this once):
 
 py -m pip install -r requirements.txt
 
-
 Run the server:
 
 py server.py
-
 
 Note: Do not click the link it gives you (it will show a 404). Just leave this terminal open.
 
@@ -112,27 +110,27 @@ Integration: The two parts are NOT connected yet.
 
 🟢 TASKS DONE (Completed)
 
-[X] Setup GitHub repository
+[x] Setup GitHub repository
 
-[X] Fix Python/Flask installation issues
+[x] Fix Python/Flask installation issues
 
-[X] Create all foundation files for Front-End and Back-End
+[x] Create all foundation files for Front-End and Back-End
 
-[X] (Front-End) Add custom map image background
+[x] (Front-End) Add custom map image background
 
-[X] (Front-End) Implement "Listing Template" system
+[x] (Front-End) Implement "Listing Template" system
 
-[X] (Front-End) Build sidebar UI to show found listings
+[x] (Front-End) Build sidebar UI to show found listings
 
-[X] (Front-End) Build pop-up image gallery modal
+[x] (Front-End) Build pop-up image gallery modal
 
-[X] (Front-End) Create 58 fake listing templates
+[x] (Front-End) Create 58 fake listing templates
 
 🔴 TO-DO: Team 1 (Eni & Bato) - Back-End
 
 This is our #1 priority. We must finish the data structure.
 
-[ ] Implement quadtree.py:
+Implement quadtree.py:
 
 [ ] Open quadtree.py.
 
@@ -142,7 +140,7 @@ This is our #1 priority. We must finish the data structure.
 
 [ ] Follow the "TASK" comments to fill in the logic for query() (the most important one).
 
-[ ] Update server.py:
+Update server.py:
 
 [ ] The server is currently generating simple dots. We need to copy the LISTING_TEMPLATES array from script.js into server.py.
 
@@ -150,7 +148,7 @@ This is our #1 priority. We must finish the data structure.
 
 [ ] Update the /search function to send back the full point object (title, price, photos) so the sidebar works.
 
-[ ] Test:
+Test:
 
 [ ] Use Postman or a test script to ensure /search returns the correct data.
 
@@ -158,7 +156,7 @@ This is our #1 priority. We must finish the data structure.
 
 Your main job is to polish the UI and prepare for integration.
 
-[ ] Polish & Improvements (Optional but Recommended):
+Polish & Improvements (Optional but Recommended):
 
 [ ] Pointer Cursor: Make the mouse cursor change to a "pointer hand" when hovering over a green/found dot (in script.js).
 
@@ -166,7 +164,7 @@ Your main job is to polish the UI and prepare for integration.
 
 [ ] Empty State: Add a friendly "No listings found" message/icon to the sidebar when the search returns 0 results (in script.js).
 
-[ ] Final Integration (Waiting on Team 1):
+Final Integration (Waiting on Team 1):
 
 [ ] Delete the "Slow Search" loop in script.js.
 
