@@ -1,28 +1,27 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Geospatial Searcher</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <h1>Geospatial Searcher</h1>
     <p>Click and drag on the map to find available listings.</p>
-    
-    <div class="container">
-        <!-- This is the "screen" where the map and dots are drawn -->
-        <canvas id="search-canvas"></canvas>
 
-        <!-- This is the sidebar -->
-        <div id="sidebar">
-            <h2 id="sidebar-title">Found 0 Listings</h2>
-            <div id="listing-container">
-                <!-- Listing cards will be added here by script.js -->
-            </div>
+    <div class="container">
+      <!-- This is the "screen" where the map and dots are drawn -->
+      <canvas id="search-canvas"></canvas>
+
+      <!-- This is the sidebar -->
+      <div id="sidebar">
+        <h2 id="sidebar-title">Found 0 Listings</h2>
+        <div id="listing-container">
+          <!-- Listing cards will be added here by script.js -->
         </div>
+      </div>
     </div>
 
     <!-- 
@@ -30,15 +29,15 @@
       This is the hidden pop-up window.
     -->
     <div id="modal-backdrop">
-        <div id="modal-content">
-            <span id="modal-close-btn">&times;</span>
-            <img id="modal-main-image" src="" alt="Listing Image">
-            <div id="modal-thumbnails">
-                <!-- Thumbnail images will be added here by script.js -->
-            </div>
+      <div id="modal-content">
+        <span id="modal-close-btn">&times;</span>
+        <img id="modal-main-image" src="" alt="Listing Image" />
+        <div id="modal-thumbnails">
+          <!-- Thumbnail images will be added here by script.js -->
         </div>
+      </div>
     </div>
-    
+
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
