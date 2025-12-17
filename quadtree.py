@@ -1,3 +1,4 @@
+
 # quadtree.py
 from helpers import Rectangle, Point
 from typing import List, Optional
