@@ -1,3 +1,4 @@
+
 /* This is for style.css */
 /* Global Settings */
 body {
@@ -243,4 +244,16 @@ canvas {
 .thumbnail-img:hover {
   opacity: 1;
   transform: translateY(-2px);
+  /* Update in style.css */
+#modal-main-image {
+    background: #f3f4f6; /* Gray placeholder while loading */
+    min-height: 400px;
+    transition: opacity 0.3s ease;
 }
+
+.thumbnail-img {
+    background: #f3f4f6;
+    aspect-ratio: 4 / 3;
+}
+}
+
