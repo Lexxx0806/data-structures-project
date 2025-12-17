@@ -8,7 +8,7 @@ const COLORS = {
   SELECTED: "#06b6d4",
   BOX_STROKE: "#3b82f6",
   BOX_FILL: "rgba(59, 130, 246, 0.15)",
-  GRID: "rgba(255, 0, 0, 0.2)",
+  GRID: "rgba(200, 200, 200, 0.3)", // Lighter grid for better looks
 };
 
 const canvas = document.getElementById("search-canvas");
@@ -34,7 +34,6 @@ const heroCtaBtn = document.getElementById("hero-cta-btn");
 const loginCloseBtn = document.getElementById("login-close-btn");
 const loginSubmitBtn = document.getElementById("login-submit-btn");
 const appLogoutBtn = document.getElementById("app-logout-btn");
-// NEW: Toggle Button Reference
 const toggleGridBtn = document.getElementById("toggle-grid-btn");
 
 let allPoints = [],
@@ -46,9 +45,18 @@ let allPoints = [],
   searchRect = { x: 0, y: 0, width: 0, height: 0 },
   mapImage = new Image(),
   animationFrameId = null,
-  showGrid = true; // NEW: Toggle State
+  showGrid = true;
 
-// LOGIN & NAV
+// --- PERFORMANCE: Preload Images on Hover ---
+function preloadImages(imageArray) {
+  if (!imageArray) return;
+  imageArray.forEach((url) => {
+    const img = new Image();
+    img.src = url;
+  });
+}
+
+// --- LOGIN & NAV ---
 function openLogin() {
   loginModal.classList.remove("opacity-0", "pointer-events-none");
   loginPanel.classList.remove("scale-95");
@@ -79,15 +87,7 @@ function enterApp() {
 function logoutApp() {
   appView.classList.remove("view-active");
   landingView.style.display = "flex";
-  setTimeout(
-    () =>
-      landingView.classList.remove(
-        "opacity-0",
-        "scale-95",
-        "pointer-events-none"
-      ),
-    50
-  );
+  setTimeout(() => landingView.classList.remove("opacity-0", "scale-95", "pointer-events-none"), 50);
   sidebar.classList.remove("visible");
   canvasWrapper.classList.remove("sidebar-active");
 }
@@ -98,7 +98,7 @@ if (loginCloseBtn) loginCloseBtn.addEventListener("click", closeLogin);
 if (loginSubmitBtn) loginSubmitBtn.addEventListener("click", handleLoginSubmit);
 if (appLogoutBtn) appLogoutBtn.addEventListener("click", logoutApp);
 
-// CANVAS & LOGIC
+// --- CANVAS & LOGIC ---
 function initCanvas() {
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
@@ -106,7 +106,7 @@ function initCanvas() {
   mapImage.onload = draw;
   mapImage.onerror = draw;
 
-  // 1. Fetch Points
+  // 1. Fetch Points (Initial Load)
   fetchPoints({ x: 0, y: 0, w: CANVAS_WIDTH, h: CANVAS_HEIGHT }).then((res) => {
     if (res) {
       allPoints = res;
@@ -127,29 +127,15 @@ function initCanvas() {
 function draw() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  // Draw Background
+  // Background
   if (mapImage.complete && mapImage.naturalWidth > 0)
     ctx.drawImage(mapImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   else {
     ctx.fillStyle = "#f3f4f6";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    ctx.strokeStyle = "#e5e7eb";
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= CANVAS_WIDTH; i += 50) {
-      ctx.beginPath();
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, CANVAS_HEIGHT);
-      ctx.stroke();
-    }
-    for (let i = 0; i <= CANVAS_HEIGHT; i += 50) {
-      ctx.beginPath();
-      ctx.moveTo(0, i);
-      ctx.lineTo(CANVAS_WIDTH, i);
-      ctx.stroke();
-    }
   }
 
-  // Draw Quadtree Visualization (With Toggle Check)
+  // Grid
   if (showGrid) {
     ctx.strokeStyle = COLORS.GRID;
     ctx.lineWidth = 1;
@@ -158,15 +144,13 @@ function draw() {
     }
   }
 
-  // Draw All Points
+  // Points
   ctx.fillStyle = COLORS.POINT;
   for (const p of allPoints) {
     ctx.beginPath();
     ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
     ctx.fill();
   }
-
-  // Draw Found Points
   ctx.fillStyle = COLORS.FOUND;
   for (const p of foundPoints) {
     ctx.beginPath();
@@ -174,7 +158,7 @@ function draw() {
     ctx.fill();
   }
 
-  // Draw Selected Point
+  // Selected Point
   if (selectedPoint) {
     ctx.fillStyle = COLORS.SELECTED;
     ctx.strokeStyle = "white";
@@ -185,23 +169,13 @@ function draw() {
     ctx.stroke();
   }
 
-  // Draw Drag Box
+  // Drag Box
   if (isDragging) {
     ctx.fillStyle = COLORS.BOX_FILL;
     ctx.strokeStyle = COLORS.BOX_STROKE;
     ctx.lineWidth = 2;
-    ctx.fillRect(
-      searchRect.x,
-      searchRect.y,
-      searchRect.width,
-      searchRect.height
-    );
-    ctx.strokeRect(
-      searchRect.x,
-      searchRect.y,
-      searchRect.width,
-      searchRect.height
-    );
+    ctx.fillRect(searchRect.x, searchRect.y, searchRect.width, searchRect.height);
+    ctx.strokeRect(searchRect.x, searchRect.y, searchRect.width, searchRect.height);
   }
 }
 
@@ -215,6 +189,7 @@ function getCanvasCoords(e) {
   };
 }
 
+// --- INTERACTION ---
 canvas.addEventListener("mousedown", (e) => {
   const c = getCanvasCoords(e),
     list = foundPoints.length ? foundPoints : allPoints;
@@ -231,9 +206,7 @@ canvas.addEventListener("mousedown", (e) => {
 
   if (clk) {
     selectedPoint = clk;
-    document
-      .getElementById(`card-${clk.id}`)
-      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById(`card-${clk.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     openSidebar();
     draw();
   } else {
@@ -259,12 +232,19 @@ canvas.addEventListener("mousemove", (e) => {
   animationFrameId = requestAnimationFrame(draw);
 });
 
+// FIX: Send 'w' and 'h' correctly to the server
 canvas.addEventListener("mouseup", async () => {
   if (!isDragging) return;
   isDragging = false;
 
   if (searchRect.width > 5 && searchRect.height > 5) {
-    const res = await fetchPoints(searchRect);
+    const searchData = {
+        x: searchRect.x,
+        y: searchRect.y,
+        w: searchRect.width, // Explicit 'w'
+        h: searchRect.height // Explicit 'h'
+    };
+    const res = await fetchPoints(searchData);
     if (res) {
       foundPoints = res;
       updateSidebarList();
@@ -274,6 +254,7 @@ canvas.addEventListener("mouseup", async () => {
   draw();
 });
 
+// --- SIDEBAR & MODAL WITH FIXES ---
 function openSidebar() {
   sidebar.classList.add("visible");
   canvasWrapper.classList.add("sidebar-active");
@@ -287,22 +268,27 @@ sidebarCloseBtn.addEventListener("click", closeSidebar);
 function updateSidebarList() {
   listingContainer.innerHTML = "";
   resultCount.textContent = `${foundPoints.length} found`;
+  
   foundPoints.forEach((p, i) => {
     const c = document.createElement("div");
     c.className = "listing-card";
     c.id = `card-${p.id}`;
     c.style.animationDelay = `${i * 0.04}s`;
 
-    const img =
-      p.photos && p.photos.length ? p.photos[0] : "https://placehold.co/100";
-
+    const img = p.photos && p.photos.length ? p.photos[0] : "https://placehold.co/100";
+    
+    // FIX: Added 'onerror' to prevent broken images in sidebar
     c.innerHTML = `
-      <img src="${img}" loading="lazy">
+      <img src="${img}" 
+           loading="lazy" 
+           onerror="this.src='https://images.unsplash.com/photo-1484154218962-a197022b5858?w=200'">
       <div class="listing-card-info">
         <h3>${p.title}</h3>
         <p class="price">$${p.price.toLocaleString()}/mo</p>
       </div>`;
 
+    // FIX: Preload images on hover for speed
+    c.addEventListener("mouseenter", () => preloadImages(p.photos));
     c.addEventListener("click", () => openModal(p));
     listingContainer.appendChild(c);
   });
@@ -310,30 +296,32 @@ function updateSidebarList() {
 
 function openModal(p) {
   document.getElementById("modal-title").textContent = p.title;
-  document.getElementById(
-    "modal-price"
-  ).textContent = `$${p.price.toLocaleString()}`;
+  document.getElementById("modal-price").textContent = `$${p.price.toLocaleString()}`;
   document.getElementById("modal-address").textContent = p.address;
   document.getElementById("modal-type").textContent = p.type;
-  document.getElementById("modal-coords").textContent = `${Math.round(
-    p.x
-  )}, ${Math.round(p.y)}`;
+  document.getElementById("modal-coords").textContent = `${Math.round(p.x)}, ${Math.round(p.y)}`;
 
   modalThumbnails.innerHTML = "";
-  const ph =
-    p.photos && p.photos.length ? p.photos : ["https://placehold.co/600"];
+  const ph = p.photos && p.photos.length ? p.photos : ["https://placehold.co/600"];
+  
   modalMainImage.src = ph[0];
+  // FIX: Added 'onerror' for main modal image
+  modalMainImage.onerror = () => {
+    modalMainImage.src = "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800";
+  };
 
   ph.forEach((s, i) => {
     const t = document.createElement("img");
     t.src = s;
     t.className = "thumbnail-img";
     if (i === 0) t.classList.add("active");
+
+    // FIX: Added 'onerror' for thumbnails
+    t.onerror = () => { t.src = "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=200"; };
+
     t.addEventListener("click", () => {
-      modalMainImage.src = s;
-      document
-        .querySelectorAll(".thumbnail-img")
-        .forEach((el) => el.classList.remove("active"));
+      modalMainImage.src = t.src;
+      document.querySelectorAll(".thumbnail-img").forEach((el) => el.classList.remove("active"));
       t.classList.add("active");
     });
     modalThumbnails.appendChild(t);
@@ -341,9 +329,7 @@ function openModal(p) {
   modalBackdrop.classList.add("visible");
 }
 
-modalCloseBtn.addEventListener("click", () =>
-  modalBackdrop.classList.remove("visible")
-);
+modalCloseBtn.addEventListener("click", () => modalBackdrop.classList.remove("visible"));
 modalBackdrop.addEventListener("click", (e) => {
   if (e.target === modalBackdrop) modalBackdrop.classList.remove("visible");
 });
@@ -363,7 +349,7 @@ async function fetchPoints(r) {
   }
 }
 
-// NEW: Toggle Logic
+// TOGGLE GRID
 if (toggleGridBtn) {
   toggleGridBtn.addEventListener("click", () => {
     showGrid = !showGrid;
