@@ -1,102 +1,244 @@
+# listings_data.py
+
 LISTING_TEMPLATES = [
-    { "price": "$4,585", "title": "Luxury Studio in Historic District", "img": "listing_1/cover.jpg" },
-    { "price": "$4,689", "title": "Modern Cabin with View", "img": "listing_2/cover.jpg" },
-    { "price": "$3,709", "title": "Sunny Studio near Park", "img": "listing_3/cover.jpg" },
-    { "price": "$3,976", "title": "Affordable Condo by the Lake", "img": "listing_4/cover.jpg" },
-    { "price": "$4,236", "title": "Urban Studio in Suburbs", "img": "listing_5/cover.jpg" },
-    { "price": "$1,088", "title": "Spacious Cabin by the Lake", "img": "listing_6/cover.jpg" },
-    { "price": "$3,201", "title": "Cozy Studio uptown", "img": "listing_7/cover.jpg" },
-    { "price": "$3,551", "title": "Charming Bungalow Downtown", "img": "listing_8/cover.jpg" },
-    { "price": "$1,741", "title": "Charming Loft by the Lake", "img": "listing_9/cover.jpg" },
-    { "price": "$3,120", "title": "Luxury Suite near Metro", "img": "listing_10/cover.jpg" },
-    { "price": "$1,175", "title": "Affordable Bungalow Downtown", "img": "listing_11/cover.jpg" },
-    { "price": "$1,785", "title": "Modern Loft near Park", "img": "listing_12/cover.jpg" },
-    { "price": "$3,994", "title": "Luxury Cabin in Historic District", "img": "listing_13/cover.jpg" },
-    { "price": "$1,885", "title": "Luxury Suite near Park", "img": "listing_14/cover.jpg" },
-    { "price": "$3,727", "title": "Charming Cabin in Historic District", "img": "listing_15/cover.jpg" },
-    { "price": "$4,126", "title": "Spacious Penthouse with View", "img": "listing_16/cover.jpg" },
-    { "price": "$3,879", "title": "Private Apartment in Suburbs", "img": "listing_17/cover.jpg" },
-    { "price": "$4,511", "title": "Cozy Bungalow with View", "img": "listing_18/cover.jpg" },
-    { "price": "$2,165", "title": "Modern Villa Downtown", "img": "listing_19/cover.jpg" },
-    { "price": "$1,054", "title": "Spacious Bungalow near Metro", "img": "listing_20/cover.jpg" },
-    { "price": "$4,314", "title": "Cozy Cabin Downtown", "img": "listing_21/cover.jpg" },
-    { "price": "$3,948", "title": "Urban Villa by the Lake", "img": "listing_22/cover.jpg" },
-    { "price": "$3,034", "title": "Sunny Condo Downtown", "img": "listing_23/cover.jpg" },
-    { "price": "$811", "title": "Private Studio in Historic District", "img": "listing_24/cover.jpg" },
-    { "price": "$965", "title": "Urban Suite near Park", "img": "listing_25/cover.jpg" },
-    { "price": "$831", "title": "Secluded Penthouse uptown", "img": "listing_26/cover.jpg" },
-    { "price": "$1,099", "title": "Modern Studio Downtown", "img": "listing_27/cover.jpg" },
-    { "price": "$3,763", "title": "Spacious Bungalow Downtown", "img": "listing_28/cover.jpg" },
-    { "price": "$3,085", "title": "Private Studio near Metro", "img": "listing_29/cover.jpg" },
-    { "price": "$3,162", "title": "Cozy Villa in Suburbs", "img": "listing_30/cover.jpg" },
-    { "price": "$2,954", "title": "Modern Studio Downtown", "img": "listing_31/cover.jpg" },
-    { "price": "$1,706", "title": "Spacious Condo by the Lake", "img": "listing_32/cover.jpg" },
-    { "price": "$2,354", "title": "Private Villa in Suburbs", "img": "listing_33/cover.jpg" },
-    { "price": "$1,977", "title": "Urban Penthouse in Historic District", "img": "listing_34/cover.jpg" },
-    { "price": "$3,960", "title": "Luxury Loft uptown", "img": "listing_35/cover.jpg" },
-    { "price": "$2,779", "title": "Modern Penthouse in Suburbs", "img": "listing_36/cover.jpg" },
-    { "price": "$1,559", "title": "Spacious Suite with View", "img": "listing_37/cover.jpg" },
-    { "price": "$828", "title": "Affordable Condo by the Lake", "img": "listing_38/cover.jpg" },
-    { "price": "$3,992", "title": "Spacious Bungalow near Park", "img": "listing_39/cover.jpg" },
-    { "price": "$3,098", "title": "Charming Penthouse uptown", "img": "listing_40/cover.jpg" },
-    { "price": "$2,894", "title": "Affordable Loft in Historic District", "img": "listing_41/cover.jpg" },
-    { "price": "$1,710", "title": "Private Studio with View", "img": "listing_42/cover.jpg" },
-    { "price": "$4,374", "title": "Charming Bungalow near Park", "img": "listing_43/cover.jpg" },
-    { "price": "$1,154", "title": "Private Room in Historic District", "img": "listing_44/cover.jpg" },
-    { "price": "$3,203", "title": "Luxury Suite Downtown", "img": "listing_45/cover.jpg" },
-    { "price": "$1,787", "title": "Cozy Bungalow in Historic District", "img": "listing_46/cover.jpg" },
-    { "price": "$2,618", "title": "Cozy Villa in Historic District", "img": "listing_47/cover.jpg" },
-    { "price": "$2,670", "title": "Secluded Suite near Park", "img": "listing_48/cover.jpg" },
-    { "price": "$1,896", "title": "Modern Penthouse near Metro", "img": "listing_49/cover.jpg" },
-    { "price": "$3,861", "title": "Private Villa by the Lake", "img": "listing_50/cover.jpg" },
-    { "price": "$4,938", "title": "Secluded Bungalow uptown", "img": "listing_51/cover.jpg" },
-    { "price": "$1,251", "title": "Urban Bungalow in Historic District", "img": "listing_52/cover.jpg" },
-    { "price": "$1,298", "title": "Spacious Apartment with View", "img": "listing_53/cover.jpg" },
-    { "price": "$3,617", "title": "Luxury Room uptown", "img": "listing_54/cover.jpg" },
-    { "price": "$2,606", "title": "Affordable Cabin near Park", "img": "listing_55/cover.jpg" },
-    { "price": "$1,680", "title": "Urban Cabin in Historic District", "img": "listing_56/cover.jpg" },
-    { "price": "$1,213", "title": "Spacious Condo by the Lake", "img": "listing_57/cover.jpg" },
-    { "price": "$4,525", "title": "Secluded Studio Downtown", "img": "listing_58/cover.jpg" },
-    { "price": "$3,510", "title": "Charming Room in Suburbs", "img": "listing_59/cover.jpg" },
-    { "price": "$923", "title": "Charming Loft with View", "img": "listing_60/cover.jpg" },
-    { "price": "$4,370", "title": "Luxury Loft in Suburbs", "img": "listing_61/cover.jpg" },
-    { "price": "$2,881", "title": "Private Suite near Park", "img": "listing_62/cover.jpg" },
-    { "price": "$1,610", "title": "Affordable Room near Park", "img": "listing_63/cover.jpg" },
-    { "price": "$2,508", "title": "Sunny Villa in Historic District", "img": "listing_64/cover.jpg" },
-    { "price": "$3,165", "title": "Charming Suite near Park", "img": "listing_65/cover.jpg" },
-    { "price": "$4,687", "title": "Secluded Loft in Suburbs", "img": "listing_66/cover.jpg" },
-    { "price": "$4,569", "title": "Modern Studio uptown", "img": "listing_67/cover.jpg" },
-    { "price": "$3,626", "title": "Secluded Bungalow in Suburbs", "img": "listing_68/cover.jpg" },
-    { "price": "$4,462", "title": "Modern Suite near Metro", "img": "listing_69/cover.jpg" },
-    { "price": "$1,219", "title": "Cozy Cabin with View", "img": "listing_70/cover.jpg" },
-    { "price": "$4,887", "title": "Urban Apartment near Park", "img": "listing_71/cover.jpg" },
-    { "price": "$3,200", "title": "Luxury Studio near Park", "img": "listing_72/cover.jpg" },
-    { "price": "$4,574", "title": "Spacious Cabin in Suburbs", "img": "listing_73/cover.jpg" },
-    { "price": "$4,368", "title": "Cozy Loft in Historic District", "img": "listing_74/cover.jpg" },
-    { "price": "$3,774", "title": "Charming Cabin uptown", "img": "listing_75/cover.jpg" },
-    { "price": "$2,416", "title": "Cozy Condo by the Lake", "img": "listing_76/cover.jpg" },
-    { "price": "$3,175", "title": "Private Condo with View", "img": "listing_77/cover.jpg" },
-    { "price": "$2,641", "title": "Sunny Cabin near Park", "img": "listing_78/cover.jpg" },
-    { "price": "$3,172", "title": "Secluded Cabin Downtown", "img": "listing_79/cover.jpg" },
-    { "price": "$2,424", "title": "Spacious Villa by the Lake", "img": "listing_80/cover.jpg" },
-    { "price": "$2,588", "title": "Sunny Apartment near Metro", "img": "listing_81/cover.jpg" },
-    { "price": "$4,709", "title": "Sunny Loft in Historic District", "img": "listing_82/cover.jpg" },
-    { "price": "$3,089", "title": "Luxury Suite near Park", "img": "listing_83/cover.jpg" },
-    { "price": "$3,843", "title": "Private Cabin in Suburbs", "img": "listing_84/cover.jpg" },
-    { "price": "$1,717", "title": "Modern Apartment Downtown", "img": "listing_85/cover.jpg" },
-    { "price": "$1,419", "title": "Cozy Apartment by the Lake", "img": "listing_86/cover.jpg" },
-    { "price": "$990", "title": "Spacious Condo in Suburbs", "img": "listing_87/cover.jpg" },
-    { "price": "$4,525", "title": "Spacious Cabin near Park", "img": "listing_88/cover.jpg" },
-    { "price": "$4,723", "title": "Secluded Penthouse near Metro", "img": "listing_89/cover.jpg" },
-    { "price": "$4,278", "title": "Luxury Apartment in Suburbs", "img": "listing_90/cover.jpg" },
-    { "price": "$3,377", "title": "Affordable Penthouse near Park", "img": "listing_91/cover.jpg" },
-    { "price": "$3,805", "title": "Charming Condo Downtown", "img": "listing_92/cover.jpg" },
-    { "price": "$2,525", "title": "Urban Bungalow uptown", "img": "listing_93/cover.jpg" },
-    { "price": "$2,159", "title": "Affordable Studio uptown", "img": "listing_94/cover.jpg" },
-    { "price": "$1,044", "title": "Sunny Room near Metro", "img": "listing_95/cover.jpg" },
-    { "price": "$1,137", "title": "Private Cabin with View", "img": "listing_96/cover.jpg" },
-    { "price": "$4,745", "title": "Luxury Studio Downtown", "img": "listing_97/cover.jpg" },
-    { "price": "$2,346", "title": "Charming Suite near Metro", "img": "listing_98/cover.jpg" },
-    { "price": "$3,373", "title": "Luxury Studio by the Lake", "img": "listing_99/cover.jpg" },
-    { "price": "$3,577", "title": "Cozy Condo near Metro", "img": "listing_100/cover.jpg" },
+    # --- 1. LUXURY GOLD PENTHOUSE ---
+    {
+        "title": "Luxury Penthouse",
+        "price": "$5,500",
+        "img": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 2. DARK MOODY LOFT ---
+    {
+        "title": "Moody Bachelor Pad",
+        "price": "$3,200",
+        "img": "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1615873968403-89e068629265?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1615529182904-14819c35db37?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 3. WHITE MINIMALIST STUDIO ---
+    {
+        "title": "Modern White Studio",
+        "price": "$2,200",
+        "img": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1534349762913-96c22b672f7d?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 4. INDUSTRIAL ORANGE BRICK ---
+    {
+        "title": "Raw Brick Loft",
+        "price": "$3,500",
+        "img": "https://images.unsplash.com/photo-1560448204-61dc36dc98c8?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1615875605825-5eb9bb5c526e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 5. JUNGLE GREEN THEME ---
+    {
+        "title": "Botanical Garden Flat",
+        "price": "$2,800",
+        "img": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1595846519845-68e298c2edd8?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1530731141654-5993c3016c77?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 6. CONCRETE BUNKER ---
+    {
+        "title": "Concrete Bunker",
+        "price": "$2,100",
+        "img": "https://images.unsplash.com/photo-1486304873000-235643847519?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1519643381401-22c77e60520e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1595558177001-29a1e4860527?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1618221381711-42ca8ab6e908?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 7. SAPPHIRE BLUE ---
+    {
+        "title": "Sapphire Blue Suite",
+        "price": "$3,900",
+        "img": "https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1555529733-0e670560f7e1?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 8. RETRO YELLOW POP ---
+    {
+        "title": "Retro Pop Apartment",
+        "price": "$2,400",
+        "img": "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1522771753035-4a50423a5a63?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1519947486511-46149fa0a254?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 9. LIBRARY / BOOKS ---
+    {
+        "title": "Writer's Retreat",
+        "price": "$2,650",
+        "img": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1597072689227-8882273e8f6e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1526657782461-9fe13402a841?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1481277542470-605612bd2d61?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1519379169154-9e3d938b813f?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 10. RUSTIC TIMBER ---
+    {
+        "title": "Timber Loft",
+        "price": "$1,900",
+        "img": "https://images.unsplash.com/photo-1570129477492-45f003f2ddfa?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1522444195799-478538b28823?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1616486029423-aaa478965c96?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1598928636135-d146006ceaec?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 11. SOFT PINK PASTEL ---
+    {
+        "title": "Soft Pastel Studio",
+        "price": "$2,300",
+        "img": "https://images.unsplash.com/photo-1499955085172-a104c9463ece?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1522771753035-4a50423a5a63?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1560185008-5c0a2a466a01?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1534349762913-96c22b672f7d?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 12. BOHO CHIC ---
+    {
+        "title": "Bohemian Apartment",
+        "price": "$2,050",
+        "img": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1502005229766-528352a2f884?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1583847268964-b28dc2f51ac9?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1505693436335-faacd4305600?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 13. ATTIC / ROOF ---
+    {
+        "title": "Top Floor Attic",
+        "price": "$1,750",
+        "img": "https://images.unsplash.com/photo-1595268480749-92c892801452?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1536376074432-ad7374f1164e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1595524362625-27c9a792e798?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1612152605347-8b0596d6e3f9?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1616047006789-b7af5afb8c28?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 14. ART GALLERY ---
+    {
+        "title": "Art Collector's Home",
+        "price": "$4,200",
+        "img": "https://images.unsplash.com/photo-1540932296774-70bc73307b28?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1582582621959-48d27397dc69?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1550920400-da1db142345e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1550921026-6a2c2c019746?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 15. GLASS PANORAMA ---
+    {
+        "title": "Panorama Glass Flat",
+        "price": "$5,100",
+        "img": "https://images.unsplash.com/photo-1502005097973-6a7082348e28?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1615874959474-d609969a20ed?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1560440021-33f9b867899d?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1551516594-56cb78394645?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1594498653385-d5172c532c00?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 16. BEIGE SCANDINAVIAN ---
+    {
+        "title": "Scandinavian Light",
+        "price": "$2,700",
+        "img": "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1556912177-e8be26c02021?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1556912167-f556f1f39fdf?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 17. JAPANESE ZEN ---
+    {
+        "title": "Japanese Zen Home",
+        "price": "$2,950",
+        "img": "https://images.unsplash.com/photo-1582239634898-3913b7787f74?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1556911220-e8dbce8cced7?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1595405400359-54eb1823528b?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1529604278261-4bf4b267df88?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 18. ELEGANT FAMILY HOME ---
+    {
+        "title": "Elegant Family Home",
+        "price": "$3,800",
+        "img": "https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1616486029423-aaa478965c96?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1616594039964-40891a911ebf?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 19. CLASSIC LEATHER ---
+    {
+        "title": "Classic Executive Suite",
+        "price": "$4,600",
+        "img": "https://images.unsplash.com/photo-1550581190-9c1c48d21d6c?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1585565882676-e17f730c493c?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1583847268964-b28dc2f51ac9?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1604578762246-41134e37f9cc?q=80&w=800&auto=format"
+        ]
+    },
+    # --- 20. SUNNY CORNER ---
+    {
+        "title": "Sunny Corner Unit",
+        "price": "$2,550",
+        "img": "https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=800&auto=format",
+        "images": [
+            "https://images.unsplash.com/photo-1499916156319-9634f815ac21?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1523755231516-e43fd2e8dca5?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1463797221720-6b07e6426c24?q=80&w=800&auto=format",
+            "https://images.unsplash.com/photo-1503174971373-b1f69850bded?q=80&w=800&auto=format"
+        ]
+    }
 ]
