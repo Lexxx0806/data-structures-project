@@ -1,505 +1,88 @@
-# server.py
-# Back-End: Now generates RICH data matching the Front-End
-
-from flask import Flask, request, jsonify
+# This is for server.py
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import random
-
 from helpers import Point, Rectangle
-from quadtree import Quadtree 
+from quadtree import Quadtree
 
-# --- Settings ---
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-POINT_COUNT = 100 # You set this to 100
-
-# --- Flask Server Setup ---
 app = Flask(__name__)
-CORS(app) 
+CORS(app)
 
-# --- NEW: LISTING TEMPLATES (MOVED TO TOP) ---
-# Python needs to see these BEFORE it runs the code below.
+# 5 Photos per template
 LISTING_TEMPLATES = [
     {
-        "title": "Cozy Studio near YZU",
-        "type": "Studio",
-        "address": "123 Yongfu Rd, Zhongli",
-        "price": 8500,
-        "photos": [
-            'fakeimages/fakeroom1.jpg', 
-            'fakeimages/fakeroom1.1.jpg',
-            'fakeimages/fakeroom1.2.jpg',
-            'fakeimages/fakeroom1.3.jpg',
-            'fakeimages/fakeroom1.4.jpg'
-        ]
+        "type": "Studio", "title": "Modern Downtown Studio", "base_price": 1200,
+        "photos": ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600","https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600","https://images.unsplash.com/photo-1584622050111-993a426fbf0a?w=600","https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600","https://images.unsplash.com/photo-1497366216548-37526070297c?w=600"]
     },
     {
-        "title": "Modern 1-BR Apartment",
-        "type": "1-BR Apartment",
-        "address": "456 Luguang Rd, Zhongli",
-        "price": 14000,
-        "photos": ['fakeimages/room2_a.jpg', 'fakeimages/room2_b.jpg']
+        "type": "Loft", "title": "Industrial Loft with View", "base_price": 2400,
+        "photos": ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600","https://images.unsplash.com/photo-1534349767944-1e244d2d1ab1?w=600","https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600","https://images.unsplash.com/photo-1505691938271-e734b5c0f6a9?w=600","https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600"]
     },
     {
-        "title": "Spacious Family Home",
-        "type": "3-BR Home",
-        "address": "789 Rongmin Rd, Zhongli",
-        "price": 26000,
-        "photos": ['fakeimages/room3_a.jpg']
+        "type": "Apartment", "title": "Cozy 1-Bedroom Apartment", "base_price": 1800,
+        "photos": ["https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600","https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600","https://images.unsplash.com/photo-1484154218962-a1c002085d2f?w=600","https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600","https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600"]
     },
     {
-        "title": "Bright Studio by the Park",
-        "type": "Studio",
-        "address": "50 Xinxing Rd, Zhongli",
-        "price": 9500,
-        "photos": ['fakeimages/room4_a.jpg', 'fakeimages/room4_b.jpg']
+        "type": "Penthouse", "title": "Luxury Penthouse Suite", "base_price": 4500,
+        "photos": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600","https://images.unsplash.com/photo-1616594039964-40832456ba15?w=600","https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600","https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600","https://images.unsplash.com/photo-1584622050111-993a426fbf0a?w=600"]
     },
     {
-        "title": "Simple Room (Shared Bath)",
-        "type": "Room",
-        "address": "21 Huanzhong Rd, Zhongli",
-        "price": 5500,
-        "photos": ['fakeimages/room5_a.jpg']
+        "type": "House", "title": "Suburban Family Home", "base_price": 3200,
+        "photos": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600","https://images.unsplash.com/photo-1484154218962-a1c002085d2f?w=600","https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=600","https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600","https://images.unsplash.com/photo-1617806118233-18e1de247200?w=600"]
     },
     {
-        "title": "Renovated 2-BR",
-        "type": "2-BR Apartment",
-        "address": "33 Huamei 1st Rd, Zhongli",
-        "price": 18000,
-        "photos": ['fakeimages/room6_a.jpg', 'fakeimages/room6_b.jpg', 'fakeimages/room6_c.jpg']
-    },
-    {
-        "title": "Luxury Loft",
-        "type": "Loft",
-        "address": "88 Guangfu Rd, Zhongli",
-        "price": 27500,
-        "photos": ['fakeimages/room7_a.jpg', 'fakeimages/room7_b.jpg']
-    },
-    {
-        "title": "Affordable Single Room",
-        "type": "Room",
-        "address": "112 Fuhua St, Zhongli",
-        "price": 6000,
-        "photos": ['fakeimages/room8_a.jpg']
-    },
-    # --- 50 NEW TEMPLATES ---
-    {
-        "title": "Sunny 1-BR near Dazhentou",
-        "type": "1-BR Apartment",
-        "address": "45 Jixian Rd, Zhongli",
-        "price": 13500,
-        "photos": ['fakeimages/room9_a.jpg', 'fakeimages/room9_b.jpg']
-    },
-    {
-        "title": "Quiet Room for Students",
-        "type": "Room",
-        "address": "220 Zhongbei Rd, Zhongli",
-        "price": 7000,
-        "photos": ['fakeimages/room10_a.jpg']
-    },
-    {
-        "title": "2-BR w/ Balcony",
-        "type": "2-BR Apartment",
-        "address": "77 Puzhong Rd, Zhongli",
-        "price": 16500,
-        "photos": ['fakeimages/room11_a.jpg', 'fakeimages/room11_b.jpg']
-    },
-    {
-        "title": "Studio near Zhongli Station",
-        "type": "Studio",
-        "address": "19 Jianxing Rd, Zhongli",
-        "price": 10000,
-        "photos": ['fakeimages/room12_a.jpg']
-    },
-    {
-        "title": "Large 4-BR House",
-        "type": "4-BR Home",
-        "address": "30 Lane 725, Jiadong Rd",
-        "price": 28000,
-        "photos": ['fakeimages/room13_a.jpg', 'fakeimages/room13_b.jpg']
-    },
-    {
-        "title": "Penthouse Loft",
-        "type": "Loft",
-        "address": "500 Minzu Rd, Zhongli",
-        "price": 27000,
-        "photos": ['fakeimages/room14_a.jpg']
-    },
-    {
-        "title": "Basic Room, All Utilities Incl.",
-        "type": "Room",
-        "address": "88 Zhongmei Rd, Zhongli",
-        "price": 6500,
-        "photos": ['fakeimages/room15_a.jpg']
-    },
-    {
-        "title": "New 1-BR Condo",
-        "type": "1-BR Apartment",
-        "address": "12 Long'an St, Zhongli",
-        "price": 15000,
-        "photos": ['fakeimages/room16_a.jpg', 'fakeimages/room16_b.jpg']
-    },
-    {
-        "title": "YZU Student Dorm (Private)",
-        "type": "Room",
-        "address": "55 Wenhua 2nd Rd, Zhongli",
-        "price": 7200,
-        "photos": ['fakeimages/room17_a.jpg']
-    },
-    {
-        "title": "2-BR near Xinjin Park",
-        "type": "2-BR Apartment",
-        "address": "210 Xinxing Rd, Zhongli",
-        "price": 17000,
-        "photos": ['fakeimages/room18_a.jpg']
-    },
-    {
-        "title": "Studio (Newly Furnished)",
-        "type": "Studio",
-        "address": "90 Longgang Rd, Zhongli",
-        "price": 11000,
-        "photos": ['fakeimages/room19_a.jpg']
-    },
-    {
-        "title": "Small Studio",
-        "type": "Studio",
-        "address": "13 Huanbei Rd, Zhongli",
-        "price": 8000,
-        "photos": ['fakeimages/room20_a.jpg']
-    },
-    {
-        "title": "3-BR for Family or Shares",
-        "type": "3-BR Home",
-        "address": "25 Yixing Rd, Zhongli",
-        "price": 22000,
-        "photos": ['fakeimages/room1_b.jpg', 'fakeimages/room3_a.jpg']
-    },
-    {
-        "title": "Minimalist Room",
-        "type": "Room",
-        "address": "300 Zhongshan Rd, Zhongli",
-        "price": 5000,
-        "photos": ['fakeimages/room2_b.jpg']
-    },
-    {
-        "title": "Loft near Luguang",
-        "type": "Loft",
-        "address": "44 Zhongxiao Rd, Zhongli",
-        "price": 21000,
-        "photos": ['fakeimages/room4_a.jpg']
-    },
-    {
-        "title": "1-BR with City View",
-        "type": "1-BR Apartment",
-        "address": "99 Jianguo Rd, Zhongli",
-        "price": 14500,
-        "photos": ['fakeimages/room5_a.jpg']
-    },
-    {
-        "title": "Studio near Night Market",
-        "type": "Studio",
-        "address": "12 Mingde Rd, Zhongli",
-        "price": 9000,
-        "photos": ['fakeimages/room6_b.jpg']
-    },
-    {
-        "title": "Large Room in Shared Apt",
-        "type": "Room",
-        "address": "34 Wuquan Rd, Zhongli",
-        "price": 7500,
-        "photos": ['fakeimages/room7_b.jpg']
-    },
-    {
-        "title": "2-BR, Pet Friendly",
-        "type": "2-BR Apartment",
-        "address": "58 Yumin St, Zhongli",
-        "price": 19000,
-        "photos": ['fakeimages/room8_a.jpg', 'fakeimages/room9_a.jpg']
-    },
-    {
-        "title": "Single Room, Female Only",
-        "type": "Room",
-        "address": "70 Wenhua Rd, Zhongli",
-        "price": 6200,
-        "photos": ['fakeimages/room10_a.jpg']
-    },
-    {
-        "title": "Studio, Top Floor",
-        "type": "Studio",
-        "address": "22 Yongle Rd, Zhongli",
-        "price": 10500,
-        "photos": ['fakeimages/room11_b.jpg']
-    },
-    {
-        "title": "Massive 3-BR Condo",
-        "type": "3-BR Home",
-        "address": "150 Zhongzheng Rd, Zhongli",
-        "price": 27500,
-        "photos": ['fakeimages/room12_a.jpg']
-    },
-    {
-        "title": "Economic Room",
-        "type": "Room",
-        "address": "43 Chang'an St, Zhongli",
-        "price": 5000,
-        "photos": ['fakeimages/room13_b.jpg']
-    },
-    {
-        "title": "1-BR with Kitchen",
-        "type": "1-BR Apartment",
-        "address": "18 Longdong Rd, Zhongli",
-        "price": 13000,
-        "photos": ['fakeimages/room14_a.jpg']
-    },
-    {
-        "title": "Studio+Balcony",
-        "type": "Studio",
-        "address": "66 Sanyuan Rd, Zhongli",
-        "price": 11500,
-        "photos": ['fakeimages/room15_a.jpg']
-    },
-    {
-        "title": "Shared Apartment",
-        "type": "Room",
-        "address": "9 Longci Rd, Zhongli",
-        "price": 6800,
-        "photos": ['fakeimages/room16_b.jpg']
-    },
-    {
-        "title": "2-BR near Ring Rd",
-        "type": "2-BR Apartment",
-        "address": "140 Huanxi Rd, Zhongli",
-        "price": 17500,
-        "photos": ['fakeimages/room17_a.jpg']
-    },
-    {
-        "title": "New Building Studio",
-        "type": "Studio",
-        "address": "200 Minquan Rd, Zhongli",
-        "price": 12000,
-        "photos": ['fakeimages/room18_a.jpg']
-    },
-    {
-        "title": "3-BR near Zhongli Arts Hall",
-        "type": "3-BR Home",
-        "address": "100 Zhonghe Rd, Zhongli",
-        "price": 24000,
-        "photos": ['fakeimages/room19_a.jpg']
-    },
-    {
-        "title": "Simple Studio",
-        "type": "Studio",
-        "address": "35 Yanping Rd, Zhongli",
-        "price": 8800,
-        "photos": ['fakeimages/room20_a.jpg']
-    },
-    {
-        "title": "1-BR near Jungli Train Station",
-        "type": "1-BR Apartment",
-        "address": "55 Zhonghe Rd, Zhongli",
-        "price": 13000,
-        "photos": ['fakeimages/room1_c.jpg']
-    },
-    {
-        "title": "Room with Private Bath",
-        "type": "Room",
-        "address": "80 Zhongxiao Rd, Zhongli",
-        "price": 7800,
-        "photos": ['fakeimages/room2_a.jpg']
-    },
-    {
-        "title": "2-BR in Luguang Village",
-        "type": "2-BR Apartment",
-        "address": "12 Luguang Rd, Zhongli",
-        "price": 15500,
-        "photos": ['fakeimages/room3_a.jpg']
-    },
-    {
-        "title": "Studio with a View",
-        "type": "Studio",
-        "address": "210 Fuhua St, Zhongli",
-        "price": 10000,
-        "photos": ['fakeimages/room4_b.jpg']
-    },
-    {
-        "title": "Cheapest Room in Town",
-        "type": "Room",
-        "address": "5 Jiadong Rd, Zhongli",
-        "price": 5000,
-        "photos": ['fakeimages/room5_a.jpg']
-    },
-    {
-        "title": "Modern 2-BR",
-        "type": "2-BR Apartment",
-        "address": "66 Rongmin Rd, Zhongli",
-        "price": 19000,
-        "photos": ['fakeimages/room6_c.jpg']
-    },
-    {
-        "title": "YZU Area Studio",
-        "type": "Studio",
-        "address": "30 Lane 123, Yongfu Rd",
-        "price": 9200,
-        "photos": ['fakeimages/room7_a.jpg']
-    },
-    {
-        "title": "1-BR, Fully Furnished",
-        "type": "1-BR Apartment",
-        "address": "45 Xinxing Rd, Zhongli",
-        "price": 14200,
-        "photos": ['fakeimages/room8_a.jpg']
-    },
-    {
-        "title": "Large Room",
-        "type": "Room",
-        "address": "180 Huanzhong Rd, Zhongli",
-        "price": 7300,
-        "photos": ['fakeimages/room9_b.jpg']
-    },
-    {
-        "title": "3-BR near YZU",
-        "type": "3-BR Home",
-        "address": "55 Wenhua 2nd Rd, Zhongli",
-        "price": 23000,
-        "photos": ['fakeimages/room10_a.jpg']
-    },
-    {
-        "title": "Studio w/ Kitchenette",
-        "type": "Studio",
-        "address": "77 Puzhong Rd, Zhongli",
-        "price": 10800,
-        "photos": ['fakeimages/room11_a.jpg']
-    },
-    {
-        "title": "2-BR near Xinjin",
-        "type": "2-BR Apartment",
-        "address": "250 Xinxing Rd, Zhongli",
-        "price": 16000,
-        "photos": ['fakeimages/room12_a.jpg']
-    },
-    {
-        "title": "Shared Room, Low Price",
-        "type": "Room",
-        "address": "33 Huamei 1st Rd, Zhongli",
-        "price": 5200,
-        "photos": ['fakeimages/room13_a.jpg']
-    },
-    {
-        "title": "1-BR by Park",
-        "type": "1-BR Apartment",
-        "address": "80 Guangfu Rd, Zhongli",
-        "price": 13800,
-        "photos": ['fakeimages/room14_a.jpg']
-    },
-    {
-        "title": "Studio (All Inclusive)",
-        "type": "Studio",
-        "address": "42 Fuhua St, Zhongli",
-        "price": 11000,
-        "photos": ['fakeimages/room15_a.jpg']
-    },
-    {
-        "title": "Room in Quiet Area",
-        "type": "Room",
-        "address": "10 Lane 725, Jiadong Rd",
-        "price": 5800,
-        "photos": ['fakeimages/room16_a.jpg']
-    },
-    {
-        "title": "2-BR Condo, New Bldg",
-        "type": "2-BR Apartment",
-        "address": "300 Minzu Rd, Zhongli",
-        "price": 21000,
-        "photos": ['fakeimages/room17_a.jpg']
-    },
-    {
-        "title": "Bright Studio",
-        "type": "Studio",
-        "address": "15 Jianxing Rd, Zhongli",
-        "price": 9000,
-        "photos": ['fakeimages/room18_a.jpg']
-    },
-    {
-        "title": "3-BR (Pets OK)",
-        "type": "3-BR Home",
-        "address": "70 Long'an St, Zhongli",
-        "price": 24500,
-        "photos": ['fakeimages/room19_a.jpg']
-    },
-    {
-        "title": "Small Room",
-        "type": "Room",
-        "address": "50 Zhongbei Rd, Zhongli",
-        "price": 5300,
-        "photos": ['fakeimages/room20_a.jpg']
+        "type": "Condo", "title": "Bright High-Rise Condo", "base_price": 2100,
+        "photos": ["https://images.unsplash.com/photo-1494526585095-c41746248156?w=600","https://images.unsplash.com/photo-1556020685-ae41abfc9365?w=600","https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?w=600","https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600","https://images.unsplash.com/photo-1565514020176-db79238b6d88?w=600"]
     }
 ]
 
-# --- Global Quadtree ---
-world_boundary = Rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-qtree = Quadtree(world_boundary, 4)
+STREETS = ["Main St", "Broadway", "Park Ave", "Oak Ln", "Pine St", "Maple Dr", "Cedar Rd", "Sunset Blvd", "River Rd"]
+boundary = Rectangle(400, 300, 400, 300)
+qt = Quadtree(boundary, 4)
 
-# --- Generate Data ---
-print(f"Generating and inserting {POINT_COUNT} points...")
-for i in range(POINT_COUNT):
-    # 1. Pick a random template
-    template = random.choice(LISTING_TEMPLATES)
-    
-    x = random.randint(0, SCREEN_WIDTH)
-    y = random.randint(0, SCREEN_HEIGHT)
-    
-    # 2. Create the Point object
-    p = Point(x, y)
-    
-    # 3. Attach the RICH DATA to the point
-    p.id = f"listing-{i}"
-    p.title = template["title"]
-    p.type = template["type"]
-    p.address = template["address"]
-    p.price = template["price"]
-    p.photos = template["photos"]
-    
-    # 4. Insert into Quadtree
-    qtree.insert(p)
-    
-print("...Done. Server is ready.")
+print("🌳 Generating 200 random listings...")
+for i in range(200):
+    x, y = random.randint(0, 800), random.randint(0, 600)
+    tmpl = random.choice(LISTING_TEMPLATES)
+    data = { "id": i, "title": tmpl["title"], "type": tmpl["type"], "price": tmpl["base_price"] + random.choice([0,50,-50,100]), "address": f"{random.randint(10,999)} {random.choice(STREETS)}", "photos": tmpl["photos"] }
+    qt.insert(Point(x, y, data))
+print("✅ Quadtree built!")
 
+@app.route('/')
+def home(): return "Server is running! Use /search endpoint."
 
-# --- API Endpoint ---
 @app.route('/search', methods=['POST'])
-def search_quadtree():
-    data = request.json
-    
-    # Basic validation to prevent crashes
-    if not data or 'x' not in data:
-        return jsonify([])
+def search():
+    try:
+        # 1. READ DATA SAFELY
+        data = request.get_json(force=True, silent=True)
+        
+        # 2. LOGGING (So you can see what is happening in the terminal)
+        if not data:
+            print("⚠️ Request received with NO DATA.")
+            return jsonify({"error": "No data"}), 400
+        
+        # 3. EXTRACTION with FALLBACKS (Handles 'w' OR 'width')
+        raw_x = data.get('x')
+        raw_y = data.get('y')
+        raw_w = data.get('w') if 'w' in data else data.get('width')
+        raw_h = data.get('h') if 'h' in data else data.get('height')
 
-    search_box = Rectangle(
-        data['x'],
-        data['y'],
-        data['width'],
-        data['height']
-    )
-    
-    found_points = qtree.query(search_box)
-    
-    # --- SEND RICH DATA BACK ---
-    # We must convert the Point objects into a JSON dictionary
-    results = []
-    for p in found_points:
-        results.append({
-            'id': getattr(p, 'id', 'unknown'),
-            'x': p.x, 
-            'y': p.y,
-            # Use getattr to avoid crashes if data is missing
-            'title': getattr(p, 'title', 'Unknown Title'),
-            'type': getattr(p, 'type', 'Unknown Type'),
-            'address': getattr(p, 'address', 'Unknown Address'),
-            'price': getattr(p, 'price', 0),
-            'photos': getattr(p, 'photos', [])
-        })
+        # 4. SAFETY CHECK (Prevents the crash)
+        if raw_x is None or raw_y is None or raw_w is None or raw_h is None:
+            print(f"❌ Error: Missing fields. Received: {data}")
+            return jsonify({"error": "Missing parameters x,y,w,h"}), 400
 
-    return jsonify(results)
+        # 5. CONVERSION
+        x, y, w, h = float(raw_x), float(raw_y), float(raw_w), float(raw_h)
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+        # 6. SEARCH
+        found = []
+        qt.query(Rectangle(x+(w/2), y+(h/2), w/2, h/2), found)
+        return jsonify([{"x": p.x, "y": p.y, **p.data} for p in found])
+
+    except Exception as e:
+        print(f"❌ CRASH: {e}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__': app.run(debug=True, port=5000)

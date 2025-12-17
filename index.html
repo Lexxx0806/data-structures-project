@@ -1,39 +1,386 @@
-<!-- index.html -->
+<!-- This is for index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Geospatial Searcher</title>
+    <title>Spatial Search - Find Your Space</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Geospatial Searcher</h1>
-    <p>Click and drag on the map to find available listings.</p>
+    <!-- VIEW 1: LANDING PAGE -->
+    <div
+      id="landing-view"
+      class="flex flex-col min-h-screen bg-white transition-opacity duration-500"
+    >
+      <nav
+        class="border-b border-gray-100 bg-white/80 backdrop-blur-md fixed w-full z-50"
+      >
+        <div
+          class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold"
+            >
+              S
+            </div>
+            <span class="font-bold text-gray-900 text-lg tracking-tight"
+              >Spatial<span class="text-blue-600">Search</span></span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <button
+              id="nav-login-btn"
+              class="text-sm font-semibold text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Log in
+            </button>
+          </div>
+        </div>
+      </nav>
 
-    <div class="container">
-      <!-- This is the "screen" where the map and dots are drawn -->
-      <canvas id="search-canvas"></canvas>
+      <main
+        class="flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-16 relative overflow-hidden"
+      >
+        <!-- Background Animation Blobs -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+          <div
+            class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"
+          ></div>
+          <div
+            class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"
+          ></div>
+          <div
+            class="absolute bottom-[-20%] left-[20%] w-[500px] h-[500px] bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"
+          ></div>
+        </div>
 
-      <!-- This is the sidebar -->
-      <div id="sidebar">
-        <h2 id="sidebar-title">Found 0 Listings</h2>
-        <div id="listing-container">
-          <!-- Listing cards will be added here by script.js -->
+        <div class="max-w-4xl text-center space-y-8 animate-fade-up">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold uppercase tracking-wide"
+          >
+            <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+            v6.5 Stable
+          </div>
+          <h1
+            class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight leading-tight"
+          >
+            Search properties <br />
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500"
+              >at the speed of thought.</span
+            >
+          </h1>
+          <button
+            id="hero-cta-btn"
+            class="px-8 py-4 bg-gray-900 text-white rounded-xl font-semibold text-lg hover:bg-gray-800 transition-all hover:scale-105 shadow-xl"
+          >
+            Launch Application
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div
+      id="login-modal"
+      class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
+    >
+      <div
+        class="bg-white w-full max-w-md p-8 rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300 relative overflow-hidden"
+        id="login-panel"
+      >
+        <!-- Login Form -->
+        <div id="login-form-content">
+          <div class="text-center mb-8">
+            <h3 class="text-2xl font-bold text-gray-900">Welcome back</h3>
+            <p class="text-gray-500 text-sm mt-2">
+              Credentials pre-filled for demo access.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <!-- Pre-filled Inputs -->
+            <div>
+              <label
+                class="block text-xs font-semibold text-gray-700 uppercase mb-1"
+                >Email</label
+              >
+              <input
+                type="email"
+                value="demo@spatial.com"
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-500 outline-none transition-all text-gray-800"
+                readonly
+              />
+            </div>
+            <div>
+              <label
+                class="block text-xs font-semibold text-gray-700 uppercase mb-1"
+                >Password</label
+              >
+              <input
+                type="password"
+                value="password123"
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-500 outline-none transition-all text-gray-800"
+                readonly
+              />
+            </div>
+            <button
+              id="login-submit-btn"
+              class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
+            >
+              Sign In
+            </button>
+          </div>
+          <button
+            id="login-close-btn"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Loading State (Hidden by default) -->
+        <div
+          id="login-loading"
+          class="absolute inset-0 bg-white flex flex-col items-center justify-center hidden"
+        >
+          <svg
+            class="animate-spin h-10 w-10 text-blue-600 mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p class="text-sm font-medium text-gray-500 animate-pulse">
+            Authenticating...
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- 
-      --- NEW: IMAGE GALLERY MODAL ---
-      This is the hidden pop-up window.
-    -->
+    <!-- VIEW 2: MAIN APP -->
+    <div
+      id="app-view"
+      class="fixed inset-0 z-0 opacity-0 pointer-events-none transition-opacity duration-700 scale-95 origin-center"
+    >
+      <!-- Navbar -->
+      <nav
+        class="absolute top-0 left-0 right-0 h-16 bg-white/90 backdrop-blur border-b border-gray-200 px-6 flex items-center justify-between z-40"
+      >
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white font-bold text-xs"
+          >
+            S
+          </div>
+          <span class="font-bold text-gray-700">Dashboard</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div
+            class="hidden md:flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200"
+          >
+            <div
+              class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+            ></div>
+            <span class="text-xs font-medium text-gray-600">System Online</span>
+          </div>
+
+          <!-- User Profile / Logout Menu -->
+          <div class="relative group">
+            <button
+              class="flex items-center gap-2 hover:bg-gray-100 px-2 py-1.5 rounded-lg transition-colors"
+            >
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm"
+              >
+                JD
+              </div>
+              <svg
+                class="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <!-- Dropdown -->
+            <div
+              class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right duration-200 z-50"
+            >
+              <div class="px-4 py-3 border-b border-gray-50">
+                <p class="text-sm font-semibold text-gray-900">John Doe</p>
+                <p class="text-xs text-gray-500">Pro Plan</p>
+              </div>
+              <div class="border-t border-gray-50 py-1">
+                <button
+                  id="app-logout-btn"
+                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                >
+                  Log out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div id="app-container" class="h-full pt-16 relative">
+        <!-- Canvas Wrapper with Smooth Transition -->
+        <div
+          id="canvas-wrapper"
+          class="h-full w-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+        >
+          <canvas id="search-canvas"></canvas>
+
+          <div
+            id="instruction-badge"
+            class="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md px-4 py-3 rounded-xl shadow-lg border border-white/50 text-sm text-gray-600 pointer-events-none flex items-center gap-2"
+          >
+            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            Click to select • Drag to search
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+          <div
+            class="p-5 border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-10 flex justify-between items-center"
+          >
+            <div class="flex items-center gap-3">
+              <h2 class="font-bold text-gray-800 text-lg">Listings</h2>
+              <span
+                id="result-count"
+                class="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full text-gray-500"
+                >0 found</span
+              >
+            </div>
+            <button
+              id="sidebar-close-btn"
+              class="p-1.5 hover:bg-gray-100 rounded-md text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          <div
+            id="listing-container"
+            class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
     <div id="modal-backdrop">
       <div id="modal-content">
-        <span id="modal-close-btn">&times;</span>
-        <img id="modal-main-image" src="" alt="Listing Image" />
-        <div id="modal-thumbnails">
-          <!-- Thumbnail images will be added here by script.js -->
+        <div
+          class="p-4 border-b flex justify-between items-center bg-white sticky top-0 z-10"
+        >
+          <h2
+            id="modal-title"
+            class="text-xl font-bold text-gray-800 truncate pr-4"
+          >
+            Title
+          </h2>
+          <button
+            id="modal-close-btn"
+            class="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+        <div
+          class="flex-1 overflow-hidden flex flex-col lg:flex-row bg-gray-50"
+        >
+          <div
+            class="flex-1 p-4 flex flex-col gap-4 overflow-y-auto custom-scrollbar"
+          >
+            <div
+              class="aspect-video bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 relative group"
+            >
+              <img
+                id="modal-main-image"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                src=""
+                alt="Main View"
+              />
+            </div>
+            <div
+              id="modal-thumbnails"
+              class="flex gap-3 overflow-x-auto pb-2 px-1 custom-scrollbar"
+            ></div>
+          </div>
+          <div
+            class="w-full lg:w-80 bg-white p-6 border-l border-gray-200 overflow-y-auto custom-scrollbar"
+          >
+            <div class="space-y-6">
+              <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                <p
+                  class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1"
+                >
+                  Monthly Rent
+                </p>
+                <p id="modal-price" class="text-3xl font-bold text-gray-900">
+                  $0
+                </p>
+                <button
+                  class="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/20 transition-all"
+                >
+                  Contact Agent
+                </button>
+              </div>
+              <div class="space-y-4 pt-2 text-sm">
+                <div>
+                  <span class="block text-xs text-gray-500 font-bold uppercase"
+                    >Address</span
+                  ><span id="modal-address" class="font-medium text-gray-900"
+                    >123 Street</span
+                  >
+                </div>
+                <div>
+                  <span class="block text-xs text-gray-500 font-bold uppercase"
+                    >Type</span
+                  ><span id="modal-type" class="font-medium text-gray-900"
+                    >Apartment</span
+                  >
+                </div>
+                <div>
+                  <span class="block text-xs text-gray-500 font-bold uppercase"
+                    >Coordinates</span
+                  ><span
+                    id="modal-coords"
+                    class="font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded inline-block mt-1"
+                    >0, 0</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
