@@ -1,13 +1,14 @@
 // script.js
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const SERVER_URL = "http://127.0.0.1:5000/search";
+const SERVER_URL = "http://127.0.0.1:5000";
 const COLORS = {
   POINT: "#9ca3af",
   FOUND: "#84cc16",
   SELECTED: "#06b6d4",
   BOX_STROKE: "#3b82f6",
   BOX_FILL: "rgba(59, 130, 246, 0.15)",
+  GRID: "rgba(255, 0, 0, 0.2)",
 };
 
 const canvas = document.getElementById("search-canvas");
@@ -33,15 +34,19 @@ const heroCtaBtn = document.getElementById("hero-cta-btn");
 const loginCloseBtn = document.getElementById("login-close-btn");
 const loginSubmitBtn = document.getElementById("login-submit-btn");
 const appLogoutBtn = document.getElementById("app-logout-btn");
+// NEW: Toggle Button Reference
+const toggleGridBtn = document.getElementById("toggle-grid-btn");
 
 let allPoints = [],
   foundPoints = [],
+  gridBoxes = [],
   selectedPoint = null,
   isDragging = false,
   dragStart = { x: 0, y: 0 },
   searchRect = { x: 0, y: 0, width: 0, height: 0 },
   mapImage = new Image(),
-  animationFrameId = null;
+  animationFrameId = null,
+  showGrid = true; // NEW: Toggle State
 
 // LOGIN & NAV
 function openLogin() {
@@ -100,22 +105,32 @@ function initCanvas() {
   mapImage.src = "map.jpg";
   mapImage.onload = draw;
   mapImage.onerror = draw;
-  // Initial fetch of all points (pass full canvas size)
+
+  // 1. Fetch Points
   fetchPoints({ x: 0, y: 0, w: CANVAS_WIDTH, h: CANVAS_HEIGHT }).then((res) => {
     if (res) {
       allPoints = res;
       draw();
     }
   });
+
+  // 2. Fetch Quadtree Grid
+  fetch(`${SERVER_URL}/grid`)
+    .then((res) => res.json())
+    .then((data) => {
+      gridBoxes = data;
+      draw();
+    })
+    .catch((err) => console.log("Grid fetch error:", err));
 }
 
 function draw() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+  // Draw Background
   if (mapImage.complete && mapImage.naturalWidth > 0)
     ctx.drawImage(mapImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   else {
-    // Fallback Grid
     ctx.fillStyle = "#f3f4f6";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     ctx.strokeStyle = "#e5e7eb";
@@ -134,6 +149,15 @@ function draw() {
     }
   }
 
+  // Draw Quadtree Visualization (With Toggle Check)
+  if (showGrid) {
+    ctx.strokeStyle = COLORS.GRID;
+    ctx.lineWidth = 1;
+    for (const box of gridBoxes) {
+      ctx.strokeRect(box.x, box.y, box.w, box.h);
+    }
+  }
+
   // Draw All Points
   ctx.fillStyle = COLORS.POINT;
   for (const p of allPoints) {
@@ -142,7 +166,7 @@ function draw() {
     ctx.fill();
   }
 
-  // Draw Found Points (Green)
+  // Draw Found Points
   ctx.fillStyle = COLORS.FOUND;
   for (const p of foundPoints) {
     ctx.beginPath();
@@ -183,7 +207,12 @@ function draw() {
 
 function getCanvasCoords(e) {
   const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
+  const scaleX = canvas.width / r.width;
+  const scaleY = canvas.height / r.height;
+  return {
+    x: (e.clientX - r.left) * scaleX,
+    y: (e.clientY - r.top) * scaleY,
+  };
 }
 
 canvas.addEventListener("mousedown", (e) => {
@@ -192,7 +221,6 @@ canvas.addEventListener("mousedown", (e) => {
   let clk = null,
     min = 10;
 
-  // Check if clicking a point
   list.forEach((p) => {
     const d = Math.sqrt((c.x - p.x) ** 2 + (c.y - p.y) ** 2);
     if (d < min) {
@@ -209,7 +237,6 @@ canvas.addEventListener("mousedown", (e) => {
     openSidebar();
     draw();
   } else {
-    // Start Dragging
     isDragging = true;
     dragStart = c;
     searchRect = { x: c.x, y: c.y, width: 0, height: 0 };
@@ -223,14 +250,11 @@ canvas.addEventListener("mousedown", (e) => {
 canvas.addEventListener("mousemove", (e) => {
   if (!isDragging) return;
   const c = getCanvasCoords(e);
-
-  // Calculate Box
   searchRect.x = Math.min(c.x, dragStart.x);
   searchRect.y = Math.min(c.y, dragStart.y);
   searchRect.width = Math.abs(c.x - dragStart.x);
   searchRect.height = Math.abs(c.y - dragStart.y);
 
-  // Optimized Drawing (Optimization for 60FPS)
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   animationFrameId = requestAnimationFrame(draw);
 });
@@ -239,7 +263,6 @@ canvas.addEventListener("mouseup", async () => {
   if (!isDragging) return;
   isDragging = false;
 
-  // Only search if box is big enough
   if (searchRect.width > 5 && searchRect.height > 5) {
     const res = await fetchPoints(searchRect);
     if (res) {
@@ -327,7 +350,7 @@ modalBackdrop.addEventListener("click", (e) => {
 
 async function fetchPoints(r) {
   try {
-    const res = await fetch(SERVER_URL, {
+    const res = await fetch(`${SERVER_URL}/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(r),
@@ -338,4 +361,12 @@ async function fetchPoints(r) {
     console.error(e);
     return null;
   }
+}
+
+// NEW: Toggle Logic
+if (toggleGridBtn) {
+  toggleGridBtn.addEventListener("click", () => {
+    showGrid = !showGrid;
+    draw();
+  });
 }

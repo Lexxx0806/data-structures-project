@@ -21,7 +21,7 @@ STREETS = ["Main St", "Broadway", "Park Ave", "Oak Ln", "Pine St", "Maple Dr", "
 # Initialize Quadtree
 # Canvas is 800x600. Center is (400, 300). Half-width/height is 400/300.
 boundary = Rectangle(400, 300, 400, 300)
-qt = Quadtree(boundary, 4)
+qt = Quadtree(boundary, 1)
 
 def clean_price(price_str):
     """Helper to turn '$4,585' into integer 4585"""
@@ -99,6 +99,29 @@ def search():
     except Exception as e:
         print(f"❌ CRASH: {e}")
         return jsonify({"error": str(e)}), 500
+
+# --- NEW: VISUALIZER ENDPOINT ---
+@app.route('/grid', methods=['GET'])
+def get_grid():
+    """Returns the visual boundaries of the Quadtree nodes"""
+    boxes = []
+    
+    def traverse(node):
+        # Convert Center/Half-Width to Top-Left/Width/Height for Canvas
+        boxes.append({
+            "x": node.boundary.x - node.boundary.w,
+            "y": node.boundary.y - node.boundary.h,
+            "w": node.boundary.w * 2,
+            "h": node.boundary.h * 2
+        })
+        if node.divided:
+            traverse(node.ne)
+            traverse(node.nw)
+            traverse(node.se)
+            traverse(node.sw)
+            
+    traverse(qt)
+    return jsonify(boxes)
 
 if __name__ == '__main__': 
     app.run(debug=True, port=5000)
